@@ -25,10 +25,14 @@ A battle-tested methodology for deploying AI agents across enterprise operating 
 ---
 
 ## Repository Structure
+
+```
 /framework      → Core methodology documentation
 /templates      → Reusable templates for implementation
 /research       → Supporting research and statistics
 /lead-magnet    → Downloadable resources
+```
+
 ---
 
 ## About the Author
