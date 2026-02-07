@@ -6,7 +6,7 @@
 
 ## Overview
 
-Change Management is the human side of agentic operations—driving adoption, building skills, and measuring success. The technology is the easy part; changing how people work is the real challenge.
+Change Management is the human side of JBOT Protocol—driving adoption, building skills, and measuring success. The technology is the easy part; changing how people work is the real challenge.
 
 ## Core Principles
 
@@ -59,7 +59,7 @@ For every dollar spent on AI development, plan to spend three dollars on:
 ## Training Framework
 
 ### Level 1: Awareness
-- What is agentic operations?
+- What is JBOT Protocol?
 - Why is the organization adopting it?
 - What does it mean for me?
 

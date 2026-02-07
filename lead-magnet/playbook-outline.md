@@ -1,12 +1,12 @@
-# Lead Magnet: Agentic Operations Playbook
+# Lead Magnet: JBOT Protocol Playbook
 
-> **Purpose:** Outline for a downloadable PDF that introduces the Agentic Operations Framework and captures leads for consulting services.
+> **Purpose:** Outline for a downloadable PDF that introduces the JBOT Protocol and captures leads for consulting services.
 
 ---
 
 ## Document Specifications
 
-**Title:** The Agentic Operations Playbook: A Leader's Guide to AI-Native Organizations
+**Title:** The JBOT Protocol Playbook: A Leader's Guide to AI-Native Organizations
 **Format:** PDF (designed for download)
 **Length:** 15-20 pages
 **Target Audience:** COOs, VPs of Operations, Division Leaders
@@ -16,7 +16,7 @@
 
 ## Cover Page
 
-- Title: The Agentic Operations Playbook
+- Title: The JBOT Protocol Playbook
 - Subtitle: A Leader's Guide to AI-Native Organizations
 - Author: Joaquin Abondano
 - Visual: [Professional design with abstract AI/network imagery]
@@ -25,7 +25,7 @@
 
 ## Table of Contents
 
-1. The Agentic Operations Opportunity
+1. The JBOT Protocol Opportunity
 2. The Five Pillars Framework
 3. Self-Assessment: Is Your Organization Ready?
 4. Quick Start: Your First 30 Days
@@ -34,14 +34,14 @@
 
 ---
 
-## Section 1: The Agentic Operations Opportunity (2-3 pages)
+## Section 1: The JBOT Protocol Opportunity (2-3 pages)
 
 ### Opening Hook
 - The shift from AI tools to AI teammates
 - Why most AI initiatives fail (and how to avoid it)
 
 ### Key Points
-- Definition of Agentic Operations
+- Definition of JBOT Protocol
 - The difference between automation and augmentation
 - Business case: efficiency + quality + scale
 
@@ -226,4 +226,4 @@ Interactive checklist readers can complete:
 
 ---
 
-*Outline version: 1.0 | Agentic Operations Framework*
+*Outline version: 1.0 | JBOT Protocol*

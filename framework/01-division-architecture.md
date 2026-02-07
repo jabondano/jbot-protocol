@@ -6,7 +6,7 @@
 
 ## Overview
 
-Division Architecture is the practice of mapping an organization's structure to enable effective AI agent deployment. Rather than hierarchical command chains, agentic operations favor flat networks where AI agents work alongside humans within clearly defined domains.
+Division Architecture is the practice of mapping an organization's structure to enable effective AI agent deployment. Rather than hierarchical command chains, JBOT Protocol favor flat networks where AI agents work alongside humans within clearly defined domains.
 
 ## Core Principles
 

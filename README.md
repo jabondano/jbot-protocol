@@ -1,4 +1,4 @@
-# The Agentic Operations Framework™
+# JBOT Protocol
 
 **Building AI-Native Organizations That Scale Without Proportional Headcount**
 

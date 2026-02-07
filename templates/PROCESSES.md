@@ -170,4 +170,4 @@ Before marking this process complete, verify:
 
 ---
 
-*Template version: 1.0 | Agentic Operations Framework*
+*Template version: 1.0 | JBOT Protocol*

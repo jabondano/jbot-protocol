@@ -6,7 +6,7 @@
 
 ## Overview
 
-Tool Integration is the technical backbone of agentic operations—connecting AI agents to the business systems where work actually happens. This pillar covers APIs, Model Context Protocol (MCP) servers, webhooks, and the architecture needed for agents to take action.
+Tool Integration is the technical backbone of JBOT Protocol—connecting AI agents to the business systems where work actually happens. This pillar covers APIs, Model Context Protocol (MCP) servers, webhooks, and the architecture needed for agents to take action.
 
 ## Core Principles
 

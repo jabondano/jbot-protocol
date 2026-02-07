@@ -2,7 +2,7 @@
 
 ## About This Repository
 
-This is the intellectual property repository for **Agentic Operations Framework**, a consulting methodology developed by Joaquin Abondano. The content here represents proprietary frameworks, templates, and processes for helping organizations integrate AI agents into their operations.
+This is the intellectual property repository for **JBOT Protocol**, a consulting methodology developed by Joaquin Abondano. The content here represents proprietary frameworks, templates, and processes for helping organizations integrate AI agents into their operations.
 
 ## Purpose
 
@@ -14,7 +14,7 @@ When working with this codebase, understand that:
 
 ## Key Concepts
 
-### The Five Pillars of Agentic Operations
+### The Five Pillars of JBOT Protocol
 
 1. **Division Architecture** - How to map an organization's structure for AI integration
 2. **Knowledge Capture** - Methods for documenting processes, systems, and expertise
@@ -24,7 +24,7 @@ When working with this codebase, understand that:
 
 ### Terminology
 
-- **Agentic Operations** - Business processes redesigned for AI agent collaboration
+- **JBOT Protocol** - Business processes redesigned for AI agent collaboration
 - **MCP (Model Context Protocol)** - Anthropic's protocol for connecting AI to tools
 - **Custom Instructions** - Project-specific prompts that guide AI behavior
 - **Division** - A business unit or functional area within an organization

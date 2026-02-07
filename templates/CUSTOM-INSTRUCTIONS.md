@@ -220,4 +220,4 @@ Before completing any task, verify:
 
 ---
 
-*Template version: 1.0 | Agentic Operations Framework*
+*Template version: 1.0 | JBOT Protocol*
