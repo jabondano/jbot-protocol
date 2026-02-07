@@ -21,22 +21,29 @@ For every dollar spent on AI development, plan to spend three dollars on:
 
 ### 5.2 The Adoption Curve
 
-```
-                    ┌─────────────────────────┐
-                    │       Optimization      │
-               ┌────┴─────┐                   │
-               │ Expansion │                  │
-          ┌────┴────┐      │                  │
-          │ Adoption │     │                  │
-     ┌────┴───┐     │      │                  │
-     │ Pilot  │     │      │                  │
-─────┴────────┴─────┴──────┴──────────────────┴────►
-   Week 1-4    Month 2    Month 3-4      Ongoing
+```mermaid
+timeline
+    title JBOT Protocol Adoption Timeline
+    section Pilot
+        Week 1-2 : Deploy first agent (read-only)
+                 : Document top 3 processes
+        Week 3-4 : Validate agent accuracy
+                 : Promote to assisted actions
+    section Adoption
+        Month 2 : Team begins daily use
+               : Feedback collection
+               : Iterate on agent instructions
+    section Expansion
+        Month 3-4 : Add second division
+                  : Cross-division workflows
+                  : Build dashboard
+    section Optimization
+        Ongoing : Continuous improvement
+               : Measure ROI quarterly
+               : Scale to all divisions
 ```
 
 ### 5.3 Stakeholder Mapping
-
-<!-- TODO: Add stakeholder matrix template -->
 
 | Stakeholder Type | Primary Concern | Key Message |
 |------------------|-----------------|-------------|
@@ -44,6 +51,25 @@ For every dollar spent on AI development, plan to spend three dollars on:
 | Managers | Team productivity | Augmentation, not replacement |
 | Individual Contributors | Job security | New skills, higher-value work |
 | IT/Security | System integrity | Controls, compliance |
+
+#### RACI Matrix: Who Does What
+
+| Activity | Executive Sponsor | Division Owners | Individual Contributors | IT / Security |
+|----------|:-:|:-:|:-:|:-:|
+| **Architecture Design** | A | R | C | C |
+| **Knowledge Capture** | I | A | R | C |
+| **Tool Integration** | I | C | C | R |
+| **Governance Policy** | A | R | C | R |
+| **Training Development** | I | A | R | C |
+| **Pilot Program** | A | R | R | C |
+| **Go-Live Decision** | A | R | C | C |
+| **Ongoing Operations** | I | R | R | C |
+| **Security Reviews** | I | C | I | R |
+| **Performance Monitoring** | I | R | C | C |
+
+**R** = Responsible (does the work) | **A** = Accountable (makes the call) | **C** = Consulted | **I** = Informed
+
+**Key insight:** Division Owners (managers) are the linchpin. They are Responsible or Accountable for 7 of 10 activities. If they don't buy in, adoption stalls — regardless of executive sponsorship.
 
 ## Implementation Checklist
 

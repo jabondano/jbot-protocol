@@ -12,16 +12,41 @@ This guide documents the implementation of a multi-agent fleet using [OpenClaw](
 
 ### Two-Server Topology
 
-```
-┌─────────────────────────────────┐    ┌─────────────────────────────────┐
-│  Primary Server                 │    │  Fleet Server                   │
-│  ─────────────────────────────  │    │  ─────────────────────────────  │
-│  • Personal assistant (jbot)    │    │  • shipbot   (unique port)      │
-│  • Telegram integration         │    │  • mktgbot   (unique port)      │
-│  • Voice IVR phone system       │    │  • salesbot  (unique port)      │
-│  • Google Workspace access      │    │  • financebot (unique port)     │
-│  • Cross-fleet coordination     │    │  • ERP/E-commerce access        │
-└─────────────────────────────────┘    └─────────────────────────────────┘
+```mermaid
+graph LR
+    subgraph Primary["Primary Server"]
+        J[jbot<br/>Executive Assistant]
+        TG[Telegram]
+        IVR[Voice IVR]
+        GW[Google Workspace]
+        J --- TG
+        J --- IVR
+        J --- GW
+    end
+
+    subgraph Fleet["Fleet Server"]
+        SH[shipbot<br/>:3001]
+        MK[mktgbot<br/>:3002]
+        SA[salesbot<br/>:3003]
+        FI[financebot<br/>:3004]
+    end
+
+    J <-->|delegate & synthesize| SH
+    J <-->|delegate & synthesize| MK
+    J <-->|delegate & synthesize| SA
+    J <-->|delegate & synthesize| FI
+
+    SH --> SHOP[Shopify]
+    SH --> NS1[NetSuite]
+    MK --> ADS[Ad Platforms]
+    SA --> CRM[Airtable CRM]
+    FI --> NS2[NetSuite]
+
+    style J fill:#fff3e0
+    style SH fill:#e1f5fe
+    style MK fill:#e1f5fe
+    style SA fill:#e1f5fe
+    style FI fill:#e1f5fe
 ```
 
 **Why two servers?**
@@ -270,10 +295,30 @@ const response = await sessionsApi.send({
 
 ### Escalation Chains
 
-```
-shipbot → jbot (alert)     │ "3 orders over 7 days late"
-salesbot → jbot (approval) │ "New wholesale lead: Company X, $50K potential"
-financebot → jbot (review) │ "Cash flow projection ready for review"
+```mermaid
+sequenceDiagram
+    participant User as Human Operator
+    participant J as jbot (Coordinator)
+    participant SH as shipbot
+    participant FI as financebot
+
+    User->>J: "Morning briefing"
+    activate J
+
+    par Parallel data collection
+        J->>SH: "Get late orders"
+        J->>FI: "Get revenue summary"
+    end
+
+    SH-->>J: "3 orders over 7 days late"
+    FI-->>J: "Revenue: $142K MTD (+12% vs plan)"
+
+    J->>User: Synthesized briefing
+
+    Note over SH,J: Escalation flow
+    SH->>J: ALERT: VIP order #4521 is 8 days late
+    J->>User: Urgent: VIP fulfillment delay needs attention
+    deactivate J
 ```
 
 ---
@@ -341,6 +386,40 @@ Configure proactive monitoring:
 
 ---
 
+## OpenClaw Ecosystem Updates (2026)
+
+OpenClaw has evolved significantly since this guide was first written. Key updates to leverage:
+
+### ClawHub Skills Registry
+
+Agents can now auto-discover and install skills from the ClawHub marketplace. Instead of manually writing every SKILL.md, check ClawHub for pre-built skills:
+
+```bash
+openclaw skills search "late-order-alert"
+openclaw skills install @community/ecommerce-alerts
+```
+
+This accelerates deployment — community-contributed skills for common operations patterns (inventory monitoring, ticket triage, campaign reporting) can be installed and customized rather than built from scratch.
+
+### Multi-Agent Routing
+
+OpenClaw now natively supports routing channels and accounts to isolated agents. Previously required custom delegation logic; now configurable:
+
+```bash
+openclaw config set routing.telegram.shipbot "#fulfillment"
+openclaw config set routing.telegram.mktgbot "#marketing"
+```
+
+### Additional Features
+
+| Feature | Description | Impact on JBOT Protocol |
+|---------|-------------|------------------------|
+| **Live Canvas / A2UI** | Agent-driven visual workspace | Dashboard-like interfaces without custom frontend |
+| **Voice Wake + Talk Mode** | ElevenLabs integration for always-on speech | Hands-free agent interaction for warehouse/field ops |
+| **145K+ GitHub stars** | Largest open-source AI agent platform | Strong community, rapid feature development |
+
+---
+
 ## Roadmap
 
 ### Phase 1: Foundation ✅
@@ -354,18 +433,23 @@ Configure proactive monitoring:
 - [ ] Cross-division data synthesis
 - [ ] Automated escalation workflows
 - [ ] Performance dashboards
+- [ ] ClawHub skill integration
 
 ### Phase 3: Autonomy (Future)
 - [ ] Draft approval workflows
 - [ ] Routine action automation (with guardrails)
 - [ ] Predictive alerting (forecast-based)
 - [ ] Team member onboarding assistance
+- [ ] Live Canvas dashboards per division
 
 ---
 
 ## Related Resources
 
 - [OpenClaw Documentation](https://docs.openclaw.ai)
+- [ClawHub Skills Registry](https://hub.openclaw.ai)
+- [Claude Code Implementation Guide](./claude-code-guide.md) — Alternative deployment path
+- [Model Selection Guide](./model-selection-guide.md) — Cost optimization
 - [Framework Templates](/templates)
 - [Division Mapping Guide](/framework/01-division-architecture.md)
 - [Governance Framework](/framework/04-governance.md)
