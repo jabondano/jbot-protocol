@@ -14,13 +14,13 @@ This guide documents the implementation of a multi-agent fleet using [OpenClaw](
 
 ```
 ┌─────────────────────────────────┐    ┌─────────────────────────────────┐
-│  Primary Server (jbot)          │    │  Fleet VPS                      │
+│  Primary Server                 │    │  Fleet Server                   │
 │  ─────────────────────────────  │    │  ─────────────────────────────  │
-│  • Personal assistant           │    │  • shipbot   (port 18789)       │
-│  • Telegram integration         │    │  • mktgbot   (port 18790)       │
-│  • Twilio IVR phone system      │    │  • salesbot  (port 18791)       │
-│  • Google Workspace (GOG)       │    │  • financebot (port 18792)      │
-│  • Cross-fleet coordination     │    │  • Shopify/NetSuite access      │
+│  • Personal assistant (jbot)    │    │  • shipbot   (unique port)      │
+│  • Telegram integration         │    │  • mktgbot   (unique port)      │
+│  • Voice IVR phone system       │    │  • salesbot  (unique port)      │
+│  • Google Workspace access      │    │  • financebot (unique port)     │
+│  • Cross-fleet coordination     │    │  • ERP/E-commerce access        │
 └─────────────────────────────────┘    └─────────────────────────────────┘
 ```
 
@@ -65,8 +65,8 @@ cd ~/agents/shipbot
 openclaw init
 
 # Configure (creates ~/.openclaw/openclaw.json)
-openclaw config set anthropic.apiKey "sk-ant-..."
-openclaw config set gateway.port 18789
+openclaw config set anthropic.apiKey "YOUR_API_KEY"
+openclaw config set gateway.port 3001  # Use unique port per agent
 openclaw config set gateway.label "shipbot"
 ```
 
@@ -187,7 +187,7 @@ Each agent can have its own Telegram bot for direct access:
 ```bash
 # In agent workspace
 openclaw config set channels.telegram.enabled true
-openclaw config set channels.telegram.botToken "123456:ABC..."
+openclaw config set channels.telegram.botToken "YOUR_BOT_TOKEN"
 ```
 
 Alternatively, route all messages through jbot and delegate:
@@ -195,9 +195,9 @@ Alternatively, route all messages through jbot and delegate:
 ```javascript
 // In jbot, route queries to appropriate agent
 const message = "What orders are late?";
-const response = await fetch('http://fleet-vps:18789/api/sessions/send', {
+const response = await fetch('http://your-fleet-server:PORT/api/sessions/send', {
   method: 'POST',
-  headers: { 'Authorization': 'Bearer <token>' },
+  headers: { 'Authorization': 'Bearer YOUR_TOKEN' },
   body: JSON.stringify({ message })
 });
 ```
@@ -285,15 +285,15 @@ financebot → jbot (review) │ "Cash flow projection ready for review"
 Each agent gets only the API keys it needs:
 
 ```bash
-# shipbot environment
-SHOPIFY_ACCESS_TOKEN=xxx
-NETSUITE_TOKEN=xxx
+# shipbot environment (example)
+ECOMMERCE_API_TOKEN=your_token_here
+ERP_ACCESS_TOKEN=your_token_here
 
 # salesbot environment  
-AIRTABLE_API_KEY=xxx
+CRM_API_KEY=your_key_here
 
 # mktgbot environment
-META_ACCESS_TOKEN=xxx
+ADS_PLATFORM_TOKEN=your_token_here
 ```
 
 ### Human-in-the-Loop
@@ -315,19 +315,19 @@ All agent actions logged to workspace `logs/` directory. Telegram notifications 
 
 ### Health Checks
 
-Each agent exposes `/health` endpoint:
+Each agent exposes a `/health` endpoint on its configured port:
 
 ```bash
-curl http://localhost:18789/health
+curl http://localhost:PORT/health
 # {"status":"ok","agent":"shipbot","uptime":"12h"}
 ```
 
 ### Centralized Status
 
 ```bash
-# Check all agents from jbot
-for port in 18789 18790 18791 18792; do
-  curl -s http://fleet-vps:$port/health | jq '.agent, .status'
+# Check all agents from primary server
+for port in $AGENT_PORTS; do
+  curl -s http://your-fleet-server:$port/health | jq '.agent, .status'
 done
 ```
 
