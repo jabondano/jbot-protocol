@@ -4,6 +4,13 @@ All notable changes to the JBOT Protocol will be documented in this file.
 
 ---
 
+## [v2.1.2] — 2026-02-18
+
+### Added
+- **Family Operations Bot Case Study** (`case-studies/family-operations-bot.md`) — personal-scale JBOT Protocol implementation: father + 12-year-old son building a family AI operating system on OpenClaw with soul-first design, layered memory architecture, and Telegram interface
+
+---
+
 ## [v2.1.1] — 2026-02-18
 
 ### Added
