@@ -5,17 +5,19 @@
 
 ---
 
-## Metadata
-
-| Field | Value |
-|-------|-------|
-| **Division** | [e.g., Fulfillment, Marketing, Finance] |
-| **Owner** | [Human responsible for this skill] |
-| **Agent** | [e.g., shipbot, mktgbot, financebot] |
-| **Trigger** | [When this skill activates: schedule, event, or on-demand] |
-| **Source SOP** | [Link to PROCESSES.md or internal SOP this skill encodes] |
-| **Model Tier** | [Haiku / Sonnet / Opus] |
-| **Last Reviewed** | [Date] |
+```yaml
+# Metadata (YAML frontmatter)
+division: [e.g., Fulfillment, Marketing, Finance]
+owner: [Human responsible for this skill]
+agent: [e.g., shipbot, mktgbot, financebot]
+trigger: [schedule | event | on-demand]
+schedule: [e.g., "0 6 * * *" or "Every 4 hours" — only if trigger is schedule]
+source_sop: [Link to PROCESSES.md or internal SOP this skill encodes]
+model_tier: [haiku | sonnet | opus]
+token_budget: [e.g., ~8K, ~15K — estimated tokens per execution]
+silent_if_nothing: [true | false — suppress output when no actionable data found]
+last_reviewed: [YYYY-MM-DD]
+```
 
 ---
 
@@ -69,6 +71,32 @@ The agent MUST format output as:
 
 ```
 [Example output format — what the Slack message, report, or response looks like]
+```
+
+---
+
+## SQL Template (Optional)
+
+Include if the skill relies on a specific query pattern:
+
+```sql
+-- [Brief description of what this query returns]
+SELECT ...
+FROM ...
+WHERE ...
+```
+
+---
+
+## Curl Template (Optional)
+
+Include if the skill calls an external API directly:
+
+```bash
+# [Brief description of the API call]
+curl -s -X GET "https://..." \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json"
 ```
 
 ---

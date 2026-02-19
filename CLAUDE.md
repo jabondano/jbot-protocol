@@ -14,13 +14,14 @@ When working with this codebase, understand that:
 
 ## Key Concepts
 
-### The Five Pillars of JBOT Protocol
+### The Six Pillars of JBOT Protocol
 
 1. **Division Architecture** - How to map an organization's structure for AI integration
 2. **Knowledge Capture** - Methods for documenting processes, systems, and expertise
 3. **Tool Integration** - Connecting AI agents to business systems (APIs, MCPs, webhooks)
 4. **Governance** - Guardrails, permissions, human-in-the-loop requirements
 5. **Change Management** - Adoption strategies, training, success metrics
+6. **Measurement & ROI** - Quantifying value, tracking adoption, proving business case
 
 ### Terminology
 

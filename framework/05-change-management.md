@@ -166,6 +166,53 @@ timeline
 
 **Response:** Involve users in design. Iterate based on feedback. Show results.
 
+## Migration as Change Management
+
+Moving agents from local development to a production fleet server is not just a technical task — it is a change management exercise. Each phase builds team confidence, validates integrations, and reduces risk incrementally.
+
+### The 4-Phase Migration Pattern
+
+```
+Phase A → Phase B → Phase C → Phase D
+(infra)    (validate)  (migrate)   (handoff)
+```
+
+**Phase A: Core Infrastructure**
+Deploy the coordinator bot and one specialized bot to the production server. Establish the runtime environment, service management, logging, and health monitoring. No production workloads yet — this phase proves the platform works.
+
+**Phase B: Integration Validation**
+Connect bots to production APIs in read-only mode. Verify that each integration returns correct data by comparing bot outputs to known-good manual results. This phase catches credential issues, network restrictions, and API differences between development and production environments.
+
+**Phase C: Workload Migration**
+Move scheduled jobs from local development to the production fleet in batches. After migrating each batch, run the jobs for 2-3 days and verify outputs before migrating the next batch. This is the longest phase and the one where most issues surface.
+
+**Phase D: Handoff**
+Migrate the final agents. Reduce the local development environment to a watchdog-only role (monitoring the production fleet). At this point, all scheduled work runs on the fleet server and local machines are no longer required for operations.
+
+### Phase Summary
+
+| Phase | Duration | Risk Level | Rollback Strategy |
+|-------|:---:|:---:|---|
+| **A: Core Infrastructure** | 1-2 days | Low | Tear down server, continue on local |
+| **B: Integration Validation** | 2-3 days | Low | Disconnect integrations, revert to local |
+| **C: Workload Migration** | 5-10 days | Medium | Re-enable local cron jobs for any failed batch |
+| **D: Handoff** | 1-2 days | Low | Keep local agents on standby for 1 week |
+
+### "Silent If Nothing" for Alert Fatigue Prevention
+
+During migration, newly deployed agents will fire alerts as they encounter production data for the first time. Implement the "Silent If Nothing" principle from the start: agents should suppress output when there is nothing actionable. This prevents the operations team from learning to ignore alerts during the critical early days when real issues are most likely.
+
+### Key Insight: Migration IS Change Management
+
+The migration process itself is a trust-building exercise. Phase A proves the platform. Phase B proves the data. Phase C proves the workloads. Phase D proves the team can rely on the fleet without a local safety net.
+
+Organizations that skip phases or rush through them report:
+- Higher rates of silent failures (jobs that stop running without anyone noticing)
+- Credential and permission issues that surface weeks after go-live
+- Team members who distrust the fleet and maintain shadow processes locally
+
+Each phase should be communicated to stakeholders the same way any organizational change is communicated — with clear expectations, visible progress, and space for feedback.
+
 ## Deliverables
 
 1. **Communication Plan** — Stakeholder messaging strategy

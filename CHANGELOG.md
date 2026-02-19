@@ -4,6 +4,28 @@ All notable changes to the JBOT Protocol will be documented in this file.
 
 ---
 
+## [v2.1] — 2026-02-18
+
+### Added
+- **Industry Templates**: 3 vertical-specific blueprints (`industry-templates/`)
+  - Real Estate Brokerage — speed-to-lead, transaction coordination, listing intelligence
+  - Import/Export Distribution — container tracking, field staff coordination, time zone management
+  - Manufacturing Operations — cross-layer data synthesis, factory monitoring, project lifecycle
+- **B2B Lead Gen Case Study** (`case-studies/b2b-lead-gen-system.md`) — ICP scoring, 8-touch outreach, pilot framework
+- **Multi-Bot Role Separation** pattern in Division Architecture (Pillar 1) — model-function pairing, SOUL.md identity, spin-off thresholds
+- **Integration Failure Modes** section in Tool Integration (Pillar 3) — MCP limitations, custom fallback patterns, credential architecture
+- **Fleet Watchdog Pattern** in Governance (Pillar 4) — zero-token monitoring, data freshness pre-checks, retention policies
+- **Migration as Change Management** in Change Management (Pillar 5) — 4-phase VPS migration, "Silent If Nothing" principle
+- **Fleet Health Score** in Measurement & ROI (Pillar 6) — weighted 5-factor formula, data pipeline architecture, layered retention
+
+### Changed
+- Updated CLAUDE.md: "Five Pillars" → "Six Pillars"
+- Updated Getting Started guide: "Five Pillars" → "Six Pillars"
+- Updated AGENT-SKILL.md template: YAML frontmatter, `token_budget`, `silent_if_nothing` fields, optional SQL/curl template sections
+- Updated README: added `industry-templates/` and new case study to repo structure
+
+---
+
 ## [v2.0] — 2026-02-07
 
 ### Added

@@ -158,6 +158,68 @@ Leadership involvement for policy decisions.
 - **Monthly** — Governance effectiveness
 - **Quarterly** — Policy review
 
+## Fleet Watchdog Pattern
+
+At scale, monitoring the monitors becomes its own challenge. The Fleet Watchdog pattern addresses this with a lightweight, zero-token health check that runs independently of the AI fleet.
+
+### Zero-Token Cross-Platform Monitoring
+
+The watchdog is not an LLM agent. It is a simple shell script or lightweight process that:
+
+- Pings each bot's health endpoint on a fixed schedule (e.g., every 15 minutes)
+- Checks a shared database table for recent activity from each bot
+- Sends an alert only when something is wrong
+
+Because it uses no AI tokens, the watchdog has zero marginal cost and can run indefinitely without budget concerns. It is the one component that should never be an AI agent — it must be simpler and more reliable than the systems it monitors.
+
+```mermaid
+graph TD
+    W[Fleet Watchdog<br/>Shell Script] -->|every 15 min| H{Health Check}
+    H -->|ping| B1[Bot 1 Service]
+    H -->|ping| B2[Bot 2 Service]
+    H -->|ping| B3[Bot 3 Service]
+    H -->|query| DB[(Health Table<br/>Last Activity)]
+
+    H --> D{All healthy?}
+    D -->|Yes| S[Silent — No Output]
+    D -->|No| A[Alert to<br/>Ops Channel]
+
+    style W fill:#fff3e0
+    style S fill:#e8f5e9
+    style A fill:#ffcdd2
+    style DB fill:#e1f5fe
+```
+
+### Data Freshness Pre-Check
+
+Before generating any report, an agent should verify that its source data is recent enough to be useful. A daily sales report built on 3-day-old data is worse than no report — it creates false confidence.
+
+**Implementation:** Each data pipeline writes a timestamp to a shared table when it completes successfully. Before executing a report, the agent queries this table and compares the timestamp against a staleness threshold. If the data is too old, the agent either skips the report and logs the reason, or generates the report with a prominent staleness warning.
+
+### Retention Policies
+
+Not all data needs to live forever. Define retention tiers to keep storage costs manageable and query performance fast:
+
+| Tier | Retention Period | Storage | Contents |
+|------|:---:|---|---|
+| **Hot** | 7 days | Primary database (active tables) | Real-time metrics, recent bot outputs, active alerts |
+| **Warm** | 30 days | Archived tables or separate schema | Aggregated daily summaries, resolved alerts, completed task logs |
+| **Cold** | 90+ days | Exported to flat files or deleted | Monthly rollups, historical baselines, audit records |
+
+**Cleanup cadence:** Run a retention job weekly that moves hot data past 7 days to warm, and warm data past 30 days to cold. Automate this — manual cleanup does not happen.
+
+### "Silent If Nothing" Output Principle
+
+The fastest way to create alert fatigue is to send a notification every time an agent runs, even when there is nothing to report. The "Silent If Nothing" principle states:
+
+**An agent should produce output only when there is something actionable to communicate.**
+
+- A late-order alert with zero late orders should generate no message
+- An inventory watchdog with all SKUs above threshold should log internally but not notify anyone
+- A health check where all systems are green should remain silent
+
+This principle preserves the signal-to-noise ratio of notification channels. When a message does appear, the team knows it requires attention.
+
 ## Deliverables
 
 1. **Governance Policy** — Rules and guidelines for agent behavior

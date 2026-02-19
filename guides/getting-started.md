@@ -17,7 +17,7 @@ Before you start, you need:
 
 ### Step 1: Read the Framework (5 minutes)
 
-Skim the [README](../README.md) and understand the Five Pillars:
+Skim the [README](../README.md) and understand the Six Pillars:
 
 1. **Division Architecture** — Where agents fit in your org
 2. **Knowledge Capture** — Documenting what your team knows

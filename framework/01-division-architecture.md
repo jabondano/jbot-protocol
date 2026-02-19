@@ -235,6 +235,66 @@ Hub/Spoke → Hierarchical Hybrid → Mesh Network
 
 **Stage 3 — Mesh Network:** Mature organizations with established governance allow direct agent-to-agent communication. Maximizes speed.
 
+## Multi-Bot Role Separation
+
+As a fleet grows beyond a single agent, deliberate role separation becomes critical. Each bot should have a clearly defined function, an appropriate model tier, and scoped access to only the integrations it needs.
+
+### Model-Function Pairing
+
+Not every task requires the most capable model. Match model tier to cognitive complexity:
+
+| Model Tier | Function Type | Use Cases |
+|------------|--------------|-----------|
+| **Fast / Haiku** | Alerts, monitoring, classification | Inventory threshold alerts, ticket categorization, status checks, health pings |
+| **Standard / Sonnet** | Reports, analysis, structured output | Daily summaries, campaign postmortems, data reconciliation, pipeline reports |
+| **Advanced / Opus** | Synthesis, strategy, multi-source reasoning | Cross-division narratives, board-level summaries, anomaly investigation, root cause analysis |
+
+**Heuristic:** If the output is a boolean or a number, use Haiku. If it is a structured report, use Sonnet. If it requires judgment across multiple data sources, use Opus.
+
+### API Scope Minimization
+
+Each bot should have access to only the integrations required for its function. This limits blast radius if credentials are compromised and reduces context pollution.
+
+**Principle:** If a bot does not need access to a system, it should not have credentials for that system.
+
+For example, a fulfillment bot needs access to the e-commerce platform and shipping system but has no reason to access the marketing content calendar. A marketing bot needs social media and campaign analytics but should not have access to financial transaction data.
+
+### SOUL.md Identity Pattern
+
+Every bot should have an identity file (conventionally named `SOUL.md`) that defines:
+
+- **Name and role** — A clear one-line description of what this bot does
+- **Personality** — Tone, communication style, level of formality
+- **Knowledge domain** — What this bot is an expert in; what it should defer on
+- **Boundaries** — What this bot must never do, even if asked
+- **Escalation rules** — When and how to involve a human or another bot
+
+The SOUL.md file serves as the bot's "constitution" — it is loaded at the start of every session and anchors all behavior. Without it, bots drift in tone, overstep boundaries, and produce inconsistent outputs.
+
+### Spin-Off Threshold
+
+A single bot should not accumulate unlimited responsibilities. When a bot exceeds approximately 20 scheduled tasks, it is time to split it into specialized bots.
+
+**Warning signs that a bot needs splitting:**
+
+- Context window pollution — unrelated data from different functions degrades output quality
+- Conflicting instructions — marketing tone guidelines clash with finance precision requirements
+- Unclear ownership — multiple division leaders claim or dispute the bot's priorities
+- Long execution times — too many cron jobs competing for the same runtime
+
+### Example Bot Roster
+
+| Bot | Model Tier | Scheduled Tasks | Integration Scope |
+|-----|-----------|:-:|---|
+| **coordinator** | Opus | 5 | Slack, database, all bot outputs (read-only) |
+| **shipbot** | Sonnet | 8 | E-commerce platform, shipping system, inventory database |
+| **mktgbot** | Sonnet | 7 | Content calendar, social media, campaign analytics |
+| **salesbot** | Sonnet | 10 | CRM, project tracker, e-commerce (read-only) |
+| **financebot** | Sonnet | 6 | ERP, accounting system, database |
+| **alertbot** | Haiku | 12 | Health endpoints, log files, notification channels |
+
+**Note:** The coordinator bot uses the most capable model because it synthesizes outputs from all other bots — a task that requires multi-source reasoning. The alert bot uses the fastest, cheapest model because its tasks are simple threshold checks.
+
 ## Deliverables
 
 1. **Division Map** — Visual representation of organizational structure
