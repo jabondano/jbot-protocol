@@ -4,6 +4,13 @@ All notable changes to the JBOT Protocol will be documented in this file.
 
 ---
 
+## [v2.1.1] — 2026-02-18
+
+### Added
+- **Executive Operations Fleet Case Study** (`case-studies/executive-operations-fleet.md`) — autonomous 4-bot fleet replacing manual executive information assembly across 7 divisions, with hub-and-spoke architecture, fleet health scoring, and "silent if nothing" principle
+
+---
+
 ## [v2.1] — 2026-02-18
 
 ### Added

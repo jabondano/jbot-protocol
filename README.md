@@ -2,7 +2,7 @@
 
 **Building AI-Native Organizations That Scale Without Proportional Headcount**
 
-By Joaquin Abondano | [v2.1](CHANGELOG.md)
+By Joaquin Abondano | [v2.1.1](CHANGELOG.md)
 
 ---
 
@@ -137,7 +137,8 @@ See [implementation/model-selection-guide.md](implementation/model-selection-gui
 
 /case-studies                           # Real-World Evidence
   ├── anonymized-implementation.md      Public hardware company case study
-  └── b2b-lead-gen-system.md            B2B lead gen with ICP scoring & outreach
+  ├── b2b-lead-gen-system.md            B2B lead gen with ICP scoring & outreach
+  └── executive-operations-fleet.md     Autonomous executive ops fleet (4-bot architecture)
 
 /industry-templates                     # Vertical-Specific Blueprints
   ├── README.md                         Index and usage guide
