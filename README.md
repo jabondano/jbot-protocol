@@ -99,7 +99,8 @@ Self-hosted multi-agent fleet with Telegram, phone IVR, and persistent division 
 | shipbot | Fulfillment | Order tracking, inventory, late alerts |
 | mktgbot | Marketing | Campaign performance, content drafting |
 | salesbot | Sales | CRM, pipeline tracking, lead scoring |
-| financebot | Finance | Revenue dashboards, board reports |
+| opsbot | Operations | Supply chain, freight, vendor intel |
+| sysbot | Systems | Fleet monitoring, cost watchdog |
 
 See [implementation/openclaw-fleet.md](implementation/openclaw-fleet.md)
 
@@ -108,6 +109,14 @@ See [implementation/openclaw-fleet.md](implementation/openclaw-fleet.md)
 Not every task needs the most powerful model. Route by complexity and stakes to reduce costs 60-70%.
 
 See [implementation/model-selection-guide.md](implementation/model-selection-guide.md)
+
+---
+
+## Lattice Architecture (v2 — March 2026)
+
+The framework has evolved significantly since v1. The 6 pillars remain valid. What's been added is a production-grade architecture for running 10+ agents continuously — shared signal layer, three-tier memory, model cost pyramid, and async consensus patterns.
+
+→ **[Read the Lattice Architecture doc](docs/LATTICE-ARCHITECTURE.md)**
 
 ---
 
