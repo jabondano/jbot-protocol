@@ -141,3 +141,39 @@ At the 6-week mark, activate the lab-weekly cron. At 12 weeks, review whether th
 ---
 
 *JBOT Protocol · jabondano.co · 🦞*
+
+---
+
+## Addendum: AI Video Generation Rules
+
+**Core principle (always apply):**
+
+> Never use text-to-video for product ads. Text-to-video generates AI-invented product visuals that will never match the real product. Always use image-to-video starting from the actual product photo.
+
+### The Rule
+
+| Use Case | Method | Source |
+|----------|--------|--------|
+| Product ad, hero shot | image-to-video | Shopify CDN / R2 product photo |
+| Brand lifestyle B-roll | text-to-video | Prompt only (no product shown) |
+| Product demo / spin | image-to-video | White-background product photo |
+| UGC-style ad | image-to-video | Lifestyle photo with product on person |
+
+### Source of Truth for Product Images
+
+1. **Shopify CDN** — live product photos, always current
+   - URL pattern: `https://cdn.shopify.com/s/files/1/0553/0324/1846/files/[filename]`
+   - Use the `Perspective.jpg` variant as the primary input
+2. **Cloudflare R2** (`lucyd-resources-assets`) — upload canonical set here for stable URLs
+3. **Never use internal/Drive files** — local paths cause size errors on upload
+
+### Prompt Structure for Product Image-to-Video
+
+```
+[What happens to/with the product] + [Scene/environment] + [Mood/energy] + [Camera movement]
+```
+
+Example:
+> "Hands pick up the Reebok sport sunglasses, put them on, camera follows wearer outside into bright daylight. Sport energy, urban street, golden light."
+
+The prompt describes the ACTION, not the product. The product comes from the image.
