@@ -1,0 +1,544 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Inventory Watchdog Configuration",
+  "description": "Configuration schema for the Inventory Watchdog system",
+  "type": "object",
+  "required": ["company", "inventory_system", "warehouses", "thresholds", "alerts"],
+  "properties": {
+    "company": {
+      "type": "object",
+      "required": ["name", "industry"],
+      "properties": {
+        "name": {"type": "string"},
+        "industry": {
+          "type": "string",
+          "enum": ["dtc-ecommerce", "b2b-wholesale", "manufacturing", "retail", "multi-channel", "other"]
+        },
+        "deployment_date": {"type": "string", "format": "date"},
+        "timezone": {"type": "string"},
+        "sku_count": {"type": "number", "minimum": 1},
+        "warehouse_count": {"type": "number", "minimum": 1}
+      }
+    },
+    
+    "inventory_system": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["netsuite", "shopify", "woocommerce", "bigcommerce", "amazon-seller-central", "inventory-planner", "odoo", "cin7", "dear", "google-sheets", "excel", "custom"]
+        },
+        "account_id": {"type": "string"},
+        "api_credentials": {
+          "type": "object",
+          "properties": {
+            "consumer_key": {"type": "string"},
+            "consumer_secret": {"type": "string"},
+            "token_id": {"type": "string"},
+            "token_secret": {"type": "string"},
+            "access_token": {"type": "string"},
+            "api_key": {"type": "string"},
+            "realm_id": {"type": "string"}
+          }
+        },
+        "api_version": {"type": "string"},
+        "rate_limits": {
+          "type": "object",
+          "properties": {
+            "requests_per_minute": {"type": "number"},
+            "requests_per_hour": {"type": "number"},
+            "requests_per_day": {"type": "number"}
+          }
+        },
+        "integration_method": {
+          "type": "string",
+          "enum": ["api", "csv-export", "webhook", "manual"]
+        },
+        "csv_export_path": {"type": "string"},
+        "csv_schedule": {"type": "string"}
+      }
+    },
+    
+    "warehouses": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "type"],
+        "properties": {
+          "id": {"type": "string"},
+          "name": {"type": "string"},
+          "type": {
+            "type": "string",
+            "enum": ["primary", "3pl", "amazon-fba", "retail", "sales-supply", "manufacturer", "other"]
+          },
+          "location_code": {"type": "string"},
+          "country": {"type": "string"},
+          "tracked": {"type": "boolean"},
+          "allocation_percent": {"type": "number", "minimum": 0, "maximum": 100},
+          "reorder_capable": {"type": "boolean"}
+        }
+      }
+    },
+    
+    "skus": {
+      "type": "object",
+      "properties": {
+        "tracking_mode": {
+          "type": "string",
+          "enum": ["all", "product-lines", "specific-skus", "velocity-tiers", "custom-filter"]
+        },
+        "product_lines": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "prefix"],
+            "properties": {
+              "name": {"type": "string"},
+              "prefix": {"type": "string"},
+              "track_all_variants": {"type": "boolean"},
+              "specific_skus": {"type": "array", "items": {"type": "string"}},
+              "priority": {
+                "type": "string",
+                "enum": ["critical", "high", "medium", "low"]
+              }
+            }
+          }
+        },
+        "specific_skus": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "velocity_tiers": {
+          "type": "object",
+          "properties": {
+            "a_tier": {
+              "type": "object",
+              "properties": {
+                "criteria": {"type": "string"},
+                "units_per_month_min": {"type": "number"}
+              }
+            },
+            "b_tier": {
+              "type": "object",
+              "properties": {
+                "criteria": {"type": "string"},
+                "units_per_month_min": {"type": "number"}
+              }
+            },
+            "c_tier": {
+              "type": "object",
+              "properties": {
+                "criteria": {"type": "string"},
+                "units_per_month_max": {"type": "number"}
+              }
+            }
+          }
+        },
+        "exclusions": {
+          "type": "object",
+          "properties": {
+            "patterns": {
+              "type": "array",
+              "items": {"type": "string"},
+              "description": "SKU patterns to exclude (e.g., '%-BT%' for Bluetooth variants, '%-K' for kids sizes)"
+            },
+            "inactive": {"type": "boolean"},
+            "discontinued": {"type": "boolean"}
+          }
+        }
+      }
+    },
+    
+    "thresholds": {
+      "type": "object",
+      "required": ["low_stock", "out_of_stock"],
+      "properties": {
+        "low_stock": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": ["days-of-supply", "unit-count", "both"]
+            },
+            "days_of_supply": {"type": "number", "minimum": 1},
+            "unit_count": {"type": "number", "minimum": 0},
+            "velocity_lookback_days": {"type": "number", "minimum": 7, "maximum": 90}
+          }
+        },
+        "out_of_stock": {
+          "type": "object",
+          "properties": {
+            "trigger_at_zero": {"type": "boolean"},
+            "include_in_transit": {"type": "boolean"}
+          }
+        },
+        "overstock": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "months_of_supply": {"type": "number", "minimum": 3}
+          }
+        },
+        "reorder_point": {
+          "type": "object",
+          "properties": {
+            "mode": {
+              "type": "string",
+              "enum": ["automatic", "manual", "hybrid"]
+            },
+            "safety_factor": {"type": "number", "minimum": 1.0, "maximum": 5.0},
+            "lead_time_days": {"type": "number", "minimum": 1}
+          }
+        }
+      }
+    },
+    
+    "sales_channels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type"],
+        "properties": {
+          "name": {"type": "string"},
+          "type": {
+            "type": "string",
+            "enum": ["dtc-website", "amazon-fba", "wholesale", "retail", "marketplace", "pos", "other"]
+          },
+          "platform": {"type": "string"},
+          "allocation_percent": {"type": "number", "minimum": 0, "maximum": 100},
+          "warehouse_id": {"type": "string"},
+          "track_separately": {"type": "boolean"}
+        }
+      }
+    },
+    
+    "late_orders": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "source": {
+          "type": "string",
+          "enum": ["shopify", "woocommerce", "netsuite", "amazon", "custom"]
+        },
+        "age_buckets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "min_days", "max_days", "severity"],
+            "properties": {
+              "name": {"type": "string"},
+              "min_days": {"type": "number"},
+              "max_days": {"type": "number"},
+              "severity": {
+                "type": "string",
+                "enum": ["monitor", "attention", "warning", "critical", "archive"]
+              },
+              "emoji": {"type": "string"}
+            }
+          }
+        },
+        "exclusions": {
+          "type": "object",
+          "properties": {
+            "custom_orders": {"type": "boolean"},
+            "prescription_orders": {"type": "boolean"},
+            "made_to_order": {"type": "boolean"},
+            "tags": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    },
+    
+    "channel_balance": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "allocation_targets": {
+          "type": "object",
+          "patternProperties": {
+            "^.*$": {"type": "number", "minimum": 0, "maximum": 100}
+          }
+        },
+        "imbalance_threshold_percent": {"type": "number", "minimum": 0, "maximum": 100},
+        "auto_rebalance": {"type": "boolean"}
+      }
+    },
+    
+    "fulfillment_tracking": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "target_ship_hours": {"type": "number", "minimum": 1},
+        "carrier_apis": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "carrier": {
+                "type": "string",
+                "enum": ["ups", "fedex", "usps", "dhl", "canada-post", "royal-mail", "other"]
+              },
+              "api_key": {"type": "string"},
+              "track_in_transit": {"type": "boolean"}
+            }
+          }
+        },
+        "lag_detection": {
+          "type": "object",
+          "properties": {
+            "warning_hours": {"type": "number"},
+            "critical_hours": {"type": "number"}
+          }
+        }
+      }
+    },
+    
+    "reorder_process": {
+      "type": "object",
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["automated", "manual", "hybrid"]
+        },
+        "auto_generate_pos": {"type": "boolean"},
+        "approval_required": {"type": "boolean"},
+        "suppliers": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "lead_time_days"],
+            "properties": {
+              "id": {"type": "string"},
+              "name": {"type": "string"},
+              "contact_email": {"type": "string"},
+              "lead_time_days": {"type": "number", "minimum": 1},
+              "minimum_order_quantity": {"type": "number"},
+              "skus": {"type": "array", "items": {"type": "string"}},
+              "auto_approve": {"type": "boolean"}
+            }
+          }
+        },
+        "po_integration": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "system": {
+              "type": "string",
+              "enum": ["netsuite", "quickbooks", "email", "manual"]
+            }
+          }
+        }
+      }
+    },
+    
+    "alerts": {
+      "type": "object",
+      "required": ["recipients"],
+      "properties": {
+        "recipients": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "role", "delivery_channel"],
+            "properties": {
+              "name": {"type": "string"},
+              "role": {
+                "type": "string",
+                "enum": ["ops-manager", "warehouse-manager", "coo", "ceo", "buyer", "finance", "other"]
+              },
+              "delivery_channel": {
+                "type": "string",
+                "enum": ["telegram", "discord", "slack", "email", "sms", "webhook"]
+              },
+              "telegram_chat_id": {"type": "string"},
+              "discord_channel_id": {"type": "string"},
+              "slack_channel": {"type": "string"},
+              "email": {"type": "string"},
+              "phone": {"type": "string"},
+              "webhook_url": {"type": "string"},
+              "severity_filter": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "enum": ["monitor", "attention", "warning", "critical"]
+                }
+              }
+            }
+          }
+        },
+        "severity_levels": {
+          "type": "object",
+          "properties": {
+            "critical": {
+              "type": "object",
+              "properties": {
+                "emoji": {"type": "string"},
+                "notify_immediately": {"type": "boolean"}
+              }
+            },
+            "warning": {
+              "type": "object",
+              "properties": {
+                "emoji": {"type": "string"},
+                "batch_delivery": {"type": "boolean"}
+              }
+            },
+            "monitor": {
+              "type": "object",
+              "properties": {
+                "emoji": {"type": "string"},
+                "daily_digest_only": {"type": "boolean"}
+              }
+            }
+          }
+        },
+        "quiet_hours": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "start_time": {"type": "string", "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$"},
+            "end_time": {"type": "string", "pattern": "^([01]?[0-9]|2[0-3]):[0-5][0-9]$"},
+            "exceptions": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["critical", "out-of-stock"]
+              }
+            }
+          }
+        }
+      }
+    },
+    
+    "reporting": {
+      "type": "object",
+      "properties": {
+        "frequency": {
+          "type": "string",
+          "enum": ["hourly", "every-4-hours", "twice-daily", "daily", "weekly"]
+        },
+        "schedule": {
+          "type": "object",
+          "properties": {
+            "cron_expression": {"type": "string"},
+            "timezone": {"type": "string"}
+          }
+        },
+        "delivery": {
+          "type": "object",
+          "properties": {
+            "channel": {
+              "type": "string",
+              "enum": ["telegram", "discord", "slack", "email"]
+            },
+            "recipients": {"type": "array", "items": {"type": "string"}},
+            "include_charts": {"type": "boolean"}
+          }
+        },
+        "sections": {
+          "type": "object",
+          "properties": {
+            "stock_alerts": {"type": "boolean"},
+            "late_orders": {"type": "boolean"},
+            "reorder_recommendations": {"type": "boolean"},
+            "channel_balance": {"type": "boolean"},
+            "fulfillment_lag": {"type": "boolean"},
+            "open_purchase_orders": {"type": "boolean"},
+            "aged_purchase_orders": {"type": "boolean"}
+          }
+        },
+        "detail_level": {
+          "type": "string",
+          "enum": ["summary", "detailed", "full"]
+        }
+      }
+    },
+    
+    "integrations": {
+      "type": "object",
+      "properties": {
+        "slack": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "webhook_url": {"type": "string"}
+          }
+        },
+        "telegram": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "bot_token": {"type": "string"},
+            "chat_id": {"type": "string"}
+          }
+        },
+        "discord": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "webhook_url": {"type": "string"}
+          }
+        },
+        "supabase": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "url": {"type": "string"},
+            "anon_key": {"type": "string"},
+            "table_name": {"type": "string"}
+          }
+        },
+        "accounting_system": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": ["quickbooks", "xero", "netsuite", "none"]
+            },
+            "sync_pos": {"type": "boolean"}
+          }
+        }
+      }
+    },
+    
+    "performance_targets": {
+      "type": "object",
+      "properties": {
+        "stockout_prevention_rate_percent": {"type": "number", "minimum": 0, "maximum": 100},
+        "late_order_target_days": {"type": "number", "minimum": 0},
+        "fulfillment_target_hours": {"type": "number", "minimum": 1},
+        "overstock_reduction_percent": {"type": "number", "minimum": 0, "maximum": 100},
+        "ops_manager_hours_per_week": {"type": "number", "minimum": 0}
+      }
+    },
+    
+    "data_quality": {
+      "type": "object",
+      "properties": {
+        "required_fields": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "validation_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {"type": "string"},
+              "rule": {"type": "string"},
+              "severity": {
+                "type": "string",
+                "enum": ["error", "warning", "info"]
+              }
+            }
+          }
+        },
+        "auto_correct": {"type": "boolean"}
+      }
+    }
+  }
+}
