@@ -1,0 +1,320 @@
+{
+  "config_version": "1.0",
+  "generated_date": "2026-04-12",
+  
+  "company": {
+    "name": "[Company Name Redacted]",
+    "industry": "dtc-ecommerce",
+    "deployment_date": "2026-01-15",
+    "primary_contact": {
+      "name": "[Redacted]",
+      "role": "COO",
+      "email": "[redacted]@company.com"
+    }
+  },
+  
+  "brands": [
+    {
+      "id": "flagship",
+      "name": "[Flagship Brand]",
+      "voice": ["casual", "direct", "aspirational"],
+      "visual_identity": {
+        "colors": ["#000000", "#FFFFFF", "#FF6B35"],
+        "fonts": ["Inter", "Sohne"],
+        "logo_rules": "Minimum 40px height, never distort, white or black only"
+      }
+    },
+    {
+      "id": "safety",
+      "name": "[Safety Line]",
+      "voice": ["direct", "technical", "bold"],
+      "visual_identity": {
+        "colors": ["#1A1A1A", "#FFD700", "#FFFFFF"],
+        "fonts": ["Inter", "Roboto Mono"]
+      }
+    },
+    {
+      "id": "licensed",
+      "name": "[Licensed Partner Brand]",
+      "parent_brand_id": null,
+      "voice": ["casual", "bold", "aspirational"],
+      "visual_identity": {
+        "colors": ["#000000", "#FFFFFF", "#ED1C24"],
+        "fonts": ["Knockout", "Futura"]
+      },
+      "guidelines_url": "https://partner-brand.com/guidelines"
+    },
+    {
+      "id": "premium",
+      "name": "[Premium Line]",
+      "voice": ["aspirational", "formal", "direct"],
+      "visual_identity": {
+        "colors": ["#0A0A0A", "#C0C0C0", "#FFFFFF"]
+      }
+    }
+  ],
+  
+  "channels": {
+    "paid": [
+      {
+        "platform": "meta",
+        "formats": ["4:5", "9:16", "1:1", "1.91:1"],
+        "minimum_tier": 2,
+        "api_credentials": true
+      },
+      {
+        "platform": "google",
+        "formats": ["1:1", "4:5", "16:9"],
+        "minimum_tier": 3,
+        "api_credentials": true
+      },
+      {
+        "platform": "tiktok",
+        "formats": ["9:16"],
+        "minimum_tier": 3,
+        "api_credentials": false
+      }
+    ],
+    "organic": ["instagram", "tiktok", "linkedin", "email"],
+    "wholesale_b2b": true,
+    "retail_pos": true
+  },
+  
+  "production": {
+    "capabilities": {
+      "photo_shoots": {
+        "available": true,
+        "frequency": "campaign-only",
+        "budget_per_shoot": 15000
+      },
+      "product_photography": {
+        "exists": true,
+        "quality": "professional-4k"
+      },
+      "3d_rendering": {
+        "available": true,
+        "provider": "External 3D agency"
+      },
+      "in_house_designer": {
+        "available": true,
+        "hours_per_week": 35
+      },
+      "external_agency": {
+        "available": true,
+        "cost_per_asset": 250,
+        "turnaround_days": 14
+      }
+    },
+    "budget": {
+      "monthly_total": 7000,
+      "cost_per_asset_target": 5,
+      "breakdown": {
+        "design": 2500,
+        "photography": 3000,
+        "agency": 1000,
+        "tools": 500
+      }
+    },
+    "tier_definitions": {
+      "tier_1_hero": {
+        "production_method": "photo-shoot",
+        "use_cases": ["Campaign launches", "PR/wholesale", "Hero product shots", "Licensed partner co-brand"],
+        "cost_range": "$50-200/asset (shoot cost amortized)"
+      },
+      "tier_2_campaign": {
+        "production_method": "3d-render",
+        "use_cases": ["All SKUs", "Colorway variants", "Product heroes", "Channel-specific renders"],
+        "cost_range": "$30-50/asset"
+      },
+      "tier_3_evergreen": {
+        "production_method": "ai-composite",
+        "use_cases": ["Social organic", "A/B tests", "Email campaigns", "Background variants"],
+        "cost_range": "$0.28/asset"
+      },
+      "tier_4_operational": {
+        "production_method": "designer",
+        "use_cases": ["Format resizes", "Copy swaps", "Promotional badges", "Template updates"],
+        "cost_range": "$15-30/asset"
+      }
+    }
+  },
+  
+  "approval": {
+    "brief_approver": {
+      "name": "[Creative Director]",
+      "role": "Creative Director",
+      "channel": "telegram",
+      "sla_hours": 24,
+      "backup_approver": "[COO]"
+    },
+    "final_approver": {
+      "name": "[Creative Director]",
+      "role": "Creative Director",
+      "same_as_brief": true
+    },
+    "auto_approve_scenarios": ["none"],
+    "legal_compliance_review": {
+      "required": false,
+      "reviewer_role": null,
+      "turnaround_hours": 0,
+      "review_triggers": []
+    },
+    "risk_tolerance": "moderate"
+  },
+  
+  "qa": {
+    "dimensions": [
+      {
+        "name": "brand_voice",
+        "description": "Copy matches brand tone and messaging guidelines",
+        "weight": 0.2,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "product_accuracy",
+        "description": "Product shown correctly, no misrepresentation",
+        "weight": 0.25,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "hook_clarity",
+        "description": "Hook is clear, compelling, and matches awareness level",
+        "weight": 0.15,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "visual_quality",
+        "description": "Lighting, composition, resolution meet channel standards",
+        "weight": 0.2,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "legal_compliance",
+        "description": "No misleading claims, trademark issues, or regulatory violations",
+        "weight": 0.1,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "channel_fit",
+        "description": "Format, aspect ratio, and style appropriate for destination channel",
+        "weight": 0.1,
+        "validation_method": "automated-vision"
+      }
+    ],
+    "thresholds": {
+      "auto_approve": 7,
+      "flag_for_review": 6,
+      "auto_reject": 4
+    },
+    "scoring_model": "claude-sonnet-vision",
+    "validation_rules": [
+      {
+        "rule": "Logo must be visible and unobstructed",
+        "severity": "blocker"
+      },
+      {
+        "rule": "Product must be primary focal point",
+        "severity": "blocker"
+      },
+      {
+        "rule": "Copy must not make health/medical claims",
+        "severity": "blocker"
+      },
+      {
+        "rule": "Competitor brands must not appear in frame",
+        "severity": "warning"
+      }
+    ]
+  },
+  
+  "performance": {
+    "targets": {
+      "volume_per_month": 60,
+      "turnaround_hours": 24,
+      "creative_director_hours_per_week": 6,
+      "auto_route_percentage": 80
+    },
+    "fatigue_detection": {
+      "enabled": true,
+      "threshold_days": 10,
+      "threshold_impressions": 100000,
+      "threshold_frequency": 4.0
+    },
+    "feedback_loop": {
+      "enabled": true,
+      "data_sources": ["meta-ads-api", "klaviyo"],
+      "metrics_tracked": ["ctr", "cpc", "roas", "conversions"]
+    }
+  },
+  
+  "audience": {
+    "primary_awareness_level": 2,
+    "secondary_awareness_level": 3,
+    "icps": [
+      {
+        "id": "privacy-pro",
+        "name": "Privacy-Conscious Professional",
+        "description": "Remote worker, values privacy, 30-45, tech-savvy",
+        "awareness_level": 2,
+        "primary_channel": "meta"
+      },
+      {
+        "id": "power-user",
+        "name": "All-Day Power User",
+        "description": "Uses device 8+ hrs/day, multitasker, productivity-focused",
+        "awareness_level": 3,
+        "primary_channel": "meta"
+      },
+      {
+        "id": "prescription-upgrader",
+        "name": "Prescription Eyewear Upgrader",
+        "description": "Wears glasses daily, wants tech integration",
+        "awareness_level": 2,
+        "primary_channel": "google"
+      },
+      {
+        "id": "active-lifestyle",
+        "name": "Active Lifestyle Consumer",
+        "description": "Gym, outdoor activities, on-the-go, 25-40",
+        "awareness_level": 2,
+        "primary_channel": "meta"
+      },
+      {
+        "id": "ai-early-adopter",
+        "name": "AI-Forward Early Adopter",
+        "description": "Tech enthusiast, early adopter, follows AI trends",
+        "awareness_level": 4,
+        "primary_channel": "linkedin"
+      },
+      {
+        "id": "industrial-safety",
+        "name": "Industrial Safety Manager",
+        "description": "B2B, manages safety compliance, 35-55",
+        "awareness_level": 3,
+        "primary_channel": "linkedin"
+      },
+      {
+        "id": "everyday-commuter",
+        "name": "Everyday Commuter",
+        "description": "Public transit, walking, wants hands-free audio",
+        "awareness_level": 1,
+        "primary_channel": "meta"
+      }
+    ],
+    "funnel_stages": ["awareness", "consideration", "decision", "retention"],
+    "retargeting": true
+  },
+  
+  "technical": {
+    "openclaw_deployed": true,
+    "storage": {
+      "provider": "supabase",
+      "bucket": "lucyd-content-jobs",
+      "cdn_url": "https://cdn.company.com"
+    },
+    "delivery": {
+      "destinations": ["meta-ads-api", "klaviyo", "manual"]
+    },
+    "data_sources": ["meta-ads-api", "shopify", "klaviyo"]
+  }
+}

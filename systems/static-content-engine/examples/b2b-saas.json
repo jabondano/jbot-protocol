@@ -1,0 +1,258 @@
+{
+  "config_version": "1.0",
+  "generated_date": "2026-04-12",
+  
+  "company": {
+    "name": "[B2B SaaS Company - Example]",
+    "industry": "b2b-saas",
+    "deployment_date": "2026-04-01",
+    "primary_contact": {
+      "name": "[Example Marketing Director]",
+      "role": "Director of Marketing",
+      "email": "marketing@saascompany.com"
+    }
+  },
+  
+  "brands": [
+    {
+      "id": "main-product",
+      "name": "[Product Name]",
+      "voice": ["professional", "technical", "direct"],
+      "visual_identity": {
+        "colors": ["#0066CC", "#00C853", "#FFFFFF", "#F5F5F5"],
+        "fonts": ["Inter", "IBM Plex Mono"],
+        "logo_rules": "Minimum 32px height, use full color on light backgrounds, white on dark"
+      }
+    }
+  ],
+  
+  "channels": {
+    "paid": [
+      {
+        "platform": "linkedin",
+        "formats": ["1.91:1", "1:1"],
+        "minimum_tier": 2,
+        "api_credentials": true
+      },
+      {
+        "platform": "google",
+        "formats": ["1:1", "16:9"],
+        "minimum_tier": 3,
+        "api_credentials": true
+      }
+    ],
+    "organic": ["linkedin", "twitter", "blog", "email"],
+    "wholesale_b2b": false,
+    "retail_pos": false
+  },
+  
+  "production": {
+    "capabilities": {
+      "photo_shoots": {
+        "available": false,
+        "frequency": "never",
+        "budget_per_shoot": 0
+      },
+      "product_photography": {
+        "exists": true,
+        "quality": "professional-4k"
+      },
+      "3d_rendering": {
+        "available": false,
+        "provider": null
+      },
+      "in_house_designer": {
+        "available": true,
+        "hours_per_week": 20
+      },
+      "external_agency": {
+        "available": false,
+        "cost_per_asset": 0,
+        "turnaround_days": 0
+      }
+    },
+    "budget": {
+      "monthly_total": 3000,
+      "cost_per_asset_target": 25,
+      "breakdown": {
+        "design": 2500,
+        "photography": 0,
+        "agency": 0,
+        "tools": 500
+      }
+    },
+    "tier_definitions": {
+      "tier_1_hero": {
+        "production_method": "designer",
+        "use_cases": ["Product launches", "Case studies", "Landing page heroes"],
+        "cost_range": "$50-100/asset (designer time)"
+      },
+      "tier_2_campaign": {
+        "production_method": "designer",
+        "use_cases": ["Feature announcements", "Webinar promotions", "Paid campaigns"],
+        "cost_range": "$25-50/asset (designer time)"
+      },
+      "tier_3_evergreen": {
+        "production_method": "designer",
+        "use_cases": ["Blog headers", "Social organic", "Email newsletters"],
+        "cost_range": "$10-25/asset (designer time)"
+      },
+      "tier_4_operational": {
+        "production_method": "designer",
+        "use_cases": ["Format resizes", "Text updates", "Badge overlays"],
+        "cost_range": "$0/asset (Figma template automation)"
+      }
+    }
+  },
+  
+  "approval": {
+    "brief_approver": {
+      "name": "[Marketing Director]",
+      "role": "Director of Marketing",
+      "channel": "email",
+      "sla_hours": 72,
+      "backup_approver": "[VP of Marketing]"
+    },
+    "final_approver": {
+      "name": "[Marketing Director]",
+      "role": "Director of Marketing",
+      "same_as_brief": true
+    },
+    "auto_approve_scenarios": ["format-resize", "tier-4-operational"],
+    "legal_compliance_review": {
+      "required": false,
+      "reviewer_role": null,
+      "turnaround_hours": 0,
+      "review_triggers": []
+    },
+    "risk_tolerance": "conservative"
+  },
+  
+  "qa": {
+    "dimensions": [
+      {
+        "name": "technical_accuracy",
+        "description": "Product features and capabilities correctly represented",
+        "weight": 0.3,
+        "validation_method": "manual-checklist"
+      },
+      {
+        "name": "value_prop_clarity",
+        "description": "Clear value proposition and benefit statement",
+        "weight": 0.25,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "cta_strength",
+        "description": "Strong, clear call-to-action appropriate for funnel stage",
+        "weight": 0.15,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "professional_tone",
+        "description": "Maintains professional, trustworthy brand voice",
+        "weight": 0.15,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "visual_quality",
+        "description": "Clean, professional design with good readability",
+        "weight": 0.1,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "channel_fit",
+        "description": "Format and style appropriate for LinkedIn/professional context",
+        "weight": 0.05,
+        "validation_method": "automated-vision"
+      }
+    ],
+    "thresholds": {
+      "auto_approve": 8,
+      "flag_for_review": 7,
+      "auto_reject": 5
+    },
+    "scoring_model": "claude-sonnet-vision",
+    "validation_rules": [
+      {
+        "rule": "No technical claims without proof/citation",
+        "severity": "blocker"
+      },
+      {
+        "rule": "Logo and branding must be consistent",
+        "severity": "blocker"
+      },
+      {
+        "rule": "CTA must be clear and actionable",
+        "severity": "warning"
+      },
+      {
+        "rule": "Screenshots must show current product version",
+        "severity": "blocker"
+      }
+    ]
+  },
+  
+  "performance": {
+    "targets": {
+      "volume_per_month": 15,
+      "turnaround_hours": 72,
+      "creative_director_hours_per_week": 8,
+      "auto_route_percentage": 60
+    },
+    "fatigue_detection": {
+      "enabled": true,
+      "threshold_days": 14,
+      "threshold_impressions": 25000,
+      "threshold_frequency": 3.0
+    },
+    "feedback_loop": {
+      "enabled": true,
+      "data_sources": ["linkedin-ads-api", "google-ads-api", "hubspot"],
+      "metrics_tracked": ["ctr", "cpc", "conversions", "engagement"]
+    }
+  },
+  
+  "audience": {
+    "primary_awareness_level": 3,
+    "secondary_awareness_level": 4,
+    "icps": [
+      {
+        "id": "operations-director",
+        "name": "Director of Operations",
+        "description": "35-50, manages team processes, evaluates tools, budget authority",
+        "awareness_level": 3,
+        "primary_channel": "linkedin"
+      },
+      {
+        "id": "vp-engineering",
+        "name": "VP of Engineering",
+        "description": "38-55, technical decision-maker, evaluates integration/security",
+        "awareness_level": 4,
+        "primary_channel": "linkedin"
+      },
+      {
+        "id": "product-manager",
+        "name": "Senior Product Manager",
+        "description": "30-45, evaluates workflow tools, influences procurement",
+        "awareness_level": 3,
+        "primary_channel": "linkedin"
+      }
+    ],
+    "funnel_stages": ["awareness", "consideration", "decision"],
+    "retargeting": true
+  },
+  
+  "technical": {
+    "openclaw_deployed": true,
+    "storage": {
+      "provider": "s3",
+      "bucket": "saas-company-marketing-assets",
+      "cdn_url": "https://cdn.saascompany.com"
+    },
+    "delivery": {
+      "destinations": ["linkedin-ads-api", "google-ads-api", "hubspot", "manual"]
+    },
+    "data_sources": ["linkedin-ads-api", "google-ads-api", "hubspot", "ga4"]
+  }
+}

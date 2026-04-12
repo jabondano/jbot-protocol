@@ -1,0 +1,336 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Static Content Engine Configuration",
+  "description": "Configuration schema for the Static Content Engine system",
+  "type": "object",
+  "required": ["company", "brands", "channels", "production", "approval", "qa", "performance"],
+  "properties": {
+    "company": {
+      "type": "object",
+      "required": ["name", "industry"],
+      "properties": {
+        "name": {"type": "string"},
+        "industry": {"type": "string", "enum": ["dtc-ecommerce", "b2b-saas", "agency", "manufacturing", "media", "services", "other"]},
+        "deployment_date": {"type": "string", "format": "date"},
+        "primary_contact": {
+          "type": "object",
+          "properties": {
+            "name": {"type": "string"},
+            "role": {"type": "string"},
+            "email": {"type": "string", "format": "email"}
+          }
+        }
+      }
+    },
+    
+    "brands": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "voice"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "name": {"type": "string"},
+          "parent_brand_id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+          "voice": {
+            "type": "array",
+            "items": {"type": "string", "enum": ["formal", "casual", "technical", "playful", "aspirational", "direct", "empathetic", "bold"]}
+          },
+          "visual_identity": {
+            "type": "object",
+            "properties": {
+              "colors": {"type": "array", "items": {"type": "string"}},
+              "fonts": {"type": "array", "items": {"type": "string"}},
+              "logo_rules": {"type": "string"}
+            }
+          },
+          "guidelines_url": {"type": "string", "format": "uri"}
+        }
+      }
+    },
+    
+    "channels": {
+      "type": "object",
+      "required": ["paid", "organic"],
+      "properties": {
+        "paid": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["platform", "formats"],
+            "properties": {
+              "platform": {"type": "string", "enum": ["meta", "google", "tiktok", "linkedin", "pinterest", "snapchat", "reddit", "twitter"]},
+              "formats": {
+                "type": "array",
+                "items": {"type": "string", "enum": ["1:1", "4:5", "9:16", "16:9", "1.91:1"]},
+                "minItems": 1
+              },
+              "minimum_tier": {"type": "number", "minimum": 1, "maximum": 4},
+              "api_credentials": {"type": "boolean"}
+            }
+          }
+        },
+        "organic": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["instagram", "tiktok", "twitter", "linkedin", "facebook", "youtube", "blog", "email"]
+          }
+        },
+        "wholesale_b2b": {"type": "boolean"},
+        "retail_pos": {"type": "boolean"}
+      }
+    },
+    
+    "production": {
+      "type": "object",
+      "required": ["capabilities", "budget"],
+      "properties": {
+        "capabilities": {
+          "type": "object",
+          "properties": {
+            "photo_shoots": {
+              "type": "object",
+              "properties": {
+                "available": {"type": "boolean"},
+                "frequency": {"type": "string", "enum": ["on-demand", "quarterly", "campaign-only", "never"]},
+                "budget_per_shoot": {"type": "number", "minimum": 0}
+              }
+            },
+            "product_photography": {
+              "type": "object",
+              "properties": {
+                "exists": {"type": "boolean"},
+                "quality": {"type": "string", "enum": ["professional-4k", "good-1080p", "phone-quality", "none"]}
+              }
+            },
+            "3d_rendering": {
+              "type": "object",
+              "properties": {
+                "available": {"type": "boolean"},
+                "provider": {"type": "string"}
+              }
+            },
+            "in_house_designer": {
+              "type": "object",
+              "properties": {
+                "available": {"type": "boolean"},
+                "hours_per_week": {"type": "number", "minimum": 0}
+              }
+            },
+            "external_agency": {
+              "type": "object",
+              "properties": {
+                "available": {"type": "boolean"},
+                "cost_per_asset": {"type": "number", "minimum": 0},
+                "turnaround_days": {"type": "number", "minimum": 0}
+              }
+            }
+          }
+        },
+        "budget": {
+          "type": "object",
+          "properties": {
+            "monthly_total": {"type": "number", "minimum": 0},
+            "cost_per_asset_target": {"type": "number", "minimum": 0},
+            "breakdown": {
+              "type": "object",
+              "properties": {
+                "design": {"type": "number", "minimum": 0},
+                "photography": {"type": "number", "minimum": 0},
+                "agency": {"type": "number", "minimum": 0},
+                "tools": {"type": "number", "minimum": 0}
+              }
+            }
+          }
+        },
+        "tier_definitions": {
+          "type": "object",
+          "properties": {
+            "tier_1_hero": {
+              "type": "object",
+              "properties": {
+                "production_method": {"type": "string", "enum": ["photo-shoot", "3d-render", "designer", "ai-composite"]},
+                "use_cases": {"type": "array", "items": {"type": "string"}},
+                "cost_range": {"type": "string"}
+              }
+            },
+            "tier_2_campaign": {"type": "object"},
+            "tier_3_evergreen": {"type": "object"},
+            "tier_4_operational": {"type": "object"}
+          }
+        }
+      }
+    },
+    
+    "approval": {
+      "type": "object",
+      "required": ["brief_approver", "final_approver"],
+      "properties": {
+        "brief_approver": {
+          "type": "object",
+          "required": ["name", "role", "channel"],
+          "properties": {
+            "name": {"type": "string"},
+            "role": {"type": "string"},
+            "channel": {"type": "string", "enum": ["email", "slack", "telegram", "discord", "other"]},
+            "sla_hours": {"type": "number", "minimum": 0},
+            "backup_approver": {"type": "string"}
+          }
+        },
+        "final_approver": {
+          "type": "object",
+          "required": ["name", "role"],
+          "properties": {
+            "name": {"type": "string"},
+            "role": {"type": "string"},
+            "same_as_brief": {"type": "boolean"}
+          }
+        },
+        "auto_approve_scenarios": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["format-resize", "copy-variant", "organic-only", "tier-4-operational", "none"]}
+        },
+        "legal_compliance_review": {
+          "type": "object",
+          "properties": {
+            "required": {"type": "boolean"},
+            "reviewer_role": {"type": "string"},
+            "turnaround_hours": {"type": "number", "minimum": 0},
+            "review_triggers": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "risk_tolerance": {"type": "string", "enum": ["conservative", "moderate", "aggressive"]}
+      }
+    },
+    
+    "qa": {
+      "type": "object",
+      "required": ["dimensions", "thresholds"],
+      "properties": {
+        "dimensions": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["name", "description", "weight"],
+            "properties": {
+              "name": {"type": "string"},
+              "description": {"type": "string"},
+              "weight": {"type": "number", "minimum": 0, "maximum": 1},
+              "validation_method": {"type": "string", "enum": ["automated-vision", "manual-checklist", "hybrid"]}
+            }
+          }
+        },
+        "thresholds": {
+          "type": "object",
+          "properties": {
+            "auto_approve": {"type": "number", "minimum": 1, "maximum": 10},
+            "flag_for_review": {"type": "number", "minimum": 1, "maximum": 10},
+            "auto_reject": {"type": "number", "minimum": 1, "maximum": 10}
+          }
+        },
+        "scoring_model": {"type": "string", "enum": ["claude-sonnet-vision", "gpt4-vision", "manual-only"]},
+        "validation_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "rule": {"type": "string"},
+              "severity": {"type": "string", "enum": ["blocker", "warning", "info"}}
+            }
+          }
+        }
+      }
+    },
+    
+    "performance": {
+      "type": "object",
+      "required": ["targets"],
+      "properties": {
+        "targets": {
+          "type": "object",
+          "properties": {
+            "volume_per_month": {"type": "number", "minimum": 0},
+            "turnaround_hours": {"type": "number", "minimum": 0},
+            "creative_director_hours_per_week": {"type": "number", "minimum": 0},
+            "auto_route_percentage": {"type": "number", "minimum": 0, "maximum": 100}
+          }
+        },
+        "fatigue_detection": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "threshold_days": {"type": "number", "minimum": 1},
+            "threshold_impressions": {"type": "number", "minimum": 0},
+            "threshold_frequency": {"type": "number", "minimum": 0}
+          }
+        },
+        "feedback_loop": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "data_sources": {"type": "array", "items": {"type": "string"}},
+            "metrics_tracked": {"type": "array", "items": {"type": "string", "enum": ["ctr", "cpc", "cpm", "roas", "conversions", "engagement"]}}
+          }
+        }
+      }
+    },
+    
+    "audience": {
+      "type": "object",
+      "properties": {
+        "primary_awareness_level": {"type": "number", "minimum": 1, "maximum": 5},
+        "secondary_awareness_level": {"type": "number", "minimum": 1, "maximum": 5},
+        "icps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "name", "awareness_level"],
+            "properties": {
+              "id": {"type": "string", "pattern": "^[a-z0-9-]+$"},
+              "name": {"type": "string"},
+              "description": {"type": "string"},
+              "awareness_level": {"type": "number", "minimum": 1, "maximum": 5},
+              "primary_channel": {"type": "string"}
+            }
+          }
+        },
+        "funnel_stages": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["awareness", "consideration", "decision", "retention"]}
+        },
+        "retargeting": {"type": "boolean"}
+      }
+    },
+    
+    "technical": {
+      "type": "object",
+      "properties": {
+        "openclaw_deployed": {"type": "boolean"},
+        "storage": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string", "enum": ["supabase", "s3", "gcs", "r2", "local"]},
+            "bucket": {"type": "string"},
+            "cdn_url": {"type": "string", "format": "uri"}
+          }
+        },
+        "delivery": {
+          "type": "object",
+          "properties": {
+            "destinations": {
+              "type": "array",
+              "items": {"type": "string", "enum": ["meta-ads-api", "google-ads-api", "klaviyo", "mailchimp", "buffer", "hootsuite", "later", "manual"]}
+            }
+          }
+        },
+        "data_sources": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["meta-ads-api", "google-ads-api", "shopify", "ga4", "klaviyo", "hubspot", "salesforce", "custom"]}
+        }
+      }
+    }
+  }
+}
