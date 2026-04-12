@@ -1,0 +1,272 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Marketing Performance Monitor Configuration",
+  "description": "Configuration schema for the Marketing Performance Monitor system",
+  "type": "object",
+  "required": ["company", "ad_platforms", "thresholds", "output"],
+  "properties": {
+    "company": {
+      "type": "object",
+      "required": ["name", "industry"],
+      "properties": {
+        "name": {"type": "string"},
+        "industry": {"type": "string", "enum": ["dtc-ecommerce", "b2b-saas", "agency", "media", "services", "other"]},
+        "deployment_date": {"type": "string", "format": "date"},
+        "timezone": {"type": "string"}
+      }
+    },
+    
+    "ad_platforms": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["platform", "metrics"],
+        "properties": {
+          "platform": {
+            "type": "string",
+            "enum": ["meta", "google", "tiktok", "linkedin", "pinterest", "snapchat", "twitter", "reddit", "custom"]
+          },
+          "account_id": {"type": "string"},
+          "api_credentials": {
+            "type": "object",
+            "properties": {
+              "access_token": {"type": "string"},
+              "api_key": {"type": "string"},
+              "client_id": {"type": "string"},
+              "client_secret": {"type": "string"}
+            }
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["spend", "impressions", "clicks", "conversions", "revenue", "ctr", "cpc", "cpm", "cpa", "roas", "roi"]
+            },
+            "minItems": 1
+          },
+          "attribution_window_days": {"type": "number", "minimum": 1, "maximum": 90},
+          "currency": {"type": "string", "enum": ["USD", "EUR", "GBP", "CAD", "AUD", "other"]},
+          "conversion_action": {"type": "string"}
+        }
+      }
+    },
+    
+    "email_platform": {
+      "type": "object",
+      "properties": {
+        "platform": {
+          "type": "string",
+          "enum": ["klaviyo", "mailchimp", "sendgrid", "hubspot", "activecampaign", "none", "custom"]
+        },
+        "account_id": {"type": "string"},
+        "api_credentials": {
+          "type": "object",
+          "properties": {
+            "api_key": {"type": "string"},
+            "username": {"type": "string"},
+            "password": {"type": "string"}
+          }
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["sent", "delivered", "opens", "clicks", "conversions", "revenue", "open_rate", "click_rate", "ctr"]
+          }
+        }
+      }
+    },
+    
+    "thresholds": {
+      "type": "object",
+      "required": ["roas", "cpa"],
+      "properties": {
+        "roas": {
+          "type": "object",
+          "required": ["excellent", "acceptable", "poor"],
+          "properties": {
+            "excellent": {"type": "number", "minimum": 0},
+            "acceptable": {"type": "number", "minimum": 0},
+            "poor": {"type": "number", "minimum": 0}
+          }
+        },
+        "cpa": {
+          "type": "object",
+          "required": ["excellent", "acceptable", "poor"],
+          "properties": {
+            "excellent": {"type": "number", "minimum": 0},
+            "acceptable": {"type": "number", "minimum": 0},
+            "poor": {"type": "number", "minimum": 0}
+          }
+        },
+        "ctr": {
+          "type": "object",
+          "properties": {
+            "excellent": {"type": "number", "minimum": 0, "maximum": 100},
+            "acceptable": {"type": "number", "minimum": 0, "maximum": 100},
+            "poor": {"type": "number", "minimum": 0, "maximum": 100}
+          }
+        },
+        "budget_pacing": {
+          "type": "object",
+          "properties": {
+            "monthly_target": {"type": "number", "minimum": 0},
+            "alert_if_over_by_percent": {"type": "number", "minimum": 0, "maximum": 100},
+            "alert_if_under_by_percent": {"type": "number", "minimum": 0, "maximum": 100}
+          }
+        }
+      }
+    },
+    
+    "categories": {
+      "type": "object",
+      "properties": {
+        "winners": {
+          "type": "object",
+          "required": ["roas_threshold"],
+          "properties": {
+            "roas_threshold": {"type": "number", "minimum": 0},
+            "min_spend": {"type": "number", "minimum": 0},
+            "top_n": {"type": "number", "minimum": 1, "maximum": 20}
+          }
+        },
+        "losers": {
+          "type": "object",
+          "required": ["roas_threshold", "min_spend"],
+          "properties": {
+            "roas_threshold": {"type": "number", "minimum": 0},
+            "min_spend": {"type": "number", "minimum": 0},
+            "top_n": {"type": "number", "minimum": 1, "maximum": 20}
+          }
+        },
+        "alerts": {
+          "type": "object",
+          "required": ["min_spend", "max_conversions"],
+          "properties": {
+            "min_spend": {"type": "number", "minimum": 0},
+            "max_conversions": {"type": "number", "minimum": 0}
+          }
+        },
+        "top_campaigns": {
+          "type": "object",
+          "properties": {
+            "top_n": {"type": "number", "minimum": 1, "maximum": 20},
+            "sort_by": {"type": "string", "enum": ["spend", "roas", "conversions", "revenue"]}
+          }
+        }
+      }
+    },
+    
+    "insights": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["condition", "message", "severity"],
+            "properties": {
+              "condition": {"type": "string"},
+              "message": {"type": "string"},
+              "severity": {"type": "string", "enum": ["info", "warning", "urgent"]},
+              "emoji": {"type": "string"}
+            }
+          }
+        },
+        "custom_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "condition": {"type": "string"},
+              "message": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    
+    "output": {
+      "type": "object",
+      "required": ["channel", "recipients"],
+      "properties": {
+        "channel": {
+          "type": "string",
+          "enum": ["telegram", "discord", "slack", "email", "webhook"]
+        },
+        "recipients": {
+          "type": "array",
+          "items": {"type": "string"},
+          "minItems": 1
+        },
+        "channel_config": {
+          "type": "object",
+          "properties": {
+            "telegram_chat_id": {"type": "string"},
+            "discord_webhook_url": {"type": "string", "format": "uri"},
+            "slack_webhook_url": {"type": "string", "format": "uri"},
+            "slack_channel": {"type": "string"},
+            "email_addresses": {
+              "type": "array",
+              "items": {"type": "string", "format": "email"}
+            },
+            "webhook_url": {"type": "string", "format": "uri"}
+          }
+        },
+        "format": {
+          "type": "string",
+          "enum": ["text", "markdown", "html", "json"]
+        },
+        "timezone": {"type": "string"},
+        "include_footer": {"type": "boolean"},
+        "footer_names": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    
+    "schedule": {
+      "type": "object",
+      "properties": {
+        "frequency": {
+          "type": "string",
+          "enum": ["daily", "weekly", "custom"]
+        },
+        "time": {"type": "string", "pattern": "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"},
+        "days": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]}
+        },
+        "cron_expression": {"type": "string"}
+      }
+    },
+    
+    "features": {
+      "type": "object",
+      "properties": {
+        "account_summary": {"type": "boolean"},
+        "campaign_breakdown": {"type": "boolean"},
+        "creative_analysis": {"type": "boolean"},
+        "email_performance": {"type": "boolean"},
+        "insights_recommendations": {"type": "boolean"},
+        "budget_pacing": {"type": "boolean"},
+        "trend_analysis": {"type": "boolean"},
+        "day_over_day_comparison": {"type": "boolean"},
+        "week_over_week_comparison": {"type": "boolean"}
+      }
+    },
+    
+    "data_retention": {
+      "type": "object",
+      "properties": {
+        "store_historical_data": {"type": "boolean"},
+        "retention_days": {"type": "number", "minimum": 1},
+        "database_connection": {"type": "string"}
+      }
+    }
+  }
+}

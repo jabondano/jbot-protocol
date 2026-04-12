@@ -1,0 +1,181 @@
+{
+  "config_version": "1.0",
+  "generated_date": "2026-04-12",
+  
+  "company": {
+    "name": "[DTC E-commerce Company]",
+    "industry": "dtc-ecommerce",
+    "deployment_date": "2026-02-15",
+    "timezone": "America/New_York"
+  },
+  
+  "ad_platforms": [
+    {
+      "platform": "meta",
+      "account_id": "[REDACTED]",
+      "api_credentials": {
+        "access_token": "[SYSTEM_USER_TOKEN]"
+      },
+      "metrics": ["spend", "revenue", "roas", "conversions", "cpa", "ctr", "cpc", "cpm", "impressions", "clicks"],
+      "attribution_window_days": 7,
+      "currency": "USD",
+      "conversion_action": "purchase"
+    }
+  ],
+  
+  "email_platform": {
+    "platform": "klaviyo",
+    "account_id": "[REDACTED]",
+    "api_credentials": {
+      "api_key": "[KLAVIYO_API_KEY]"
+    },
+    "metrics": ["sent", "delivered", "opens", "clicks", "open_rate", "click_rate"]
+  },
+  
+  "thresholds": {
+    "roas": {
+      "excellent": 3.0,
+      "acceptable": 2.0,
+      "poor": 2.0
+    },
+    "cpa": {
+      "excellent": 40,
+      "acceptable": 60,
+      "poor": 60
+    },
+    "ctr": {
+      "excellent": 2.0,
+      "acceptable": 1.0,
+      "poor": 1.0
+    },
+    "budget_pacing": {
+      "monthly_target": 15000,
+      "alert_if_over_by_percent": 20,
+      "alert_if_under_by_percent": 20
+    }
+  },
+  
+  "categories": {
+    "winners": {
+      "roas_threshold": 3.0,
+      "min_spend": 5,
+      "top_n": 5
+    },
+    "losers": {
+      "roas_threshold": 2.0,
+      "min_spend": 10,
+      "top_n": 5
+    },
+    "alerts": {
+      "min_spend": 30,
+      "max_conversions": 0
+    },
+    "top_campaigns": {
+      "top_n": 5,
+      "sort_by": "spend"
+    }
+  },
+  
+  "insights": {
+    "enabled": true,
+    "rules": [
+      {
+        "condition": "roas >= 3.0",
+        "message": "✅ Excellent ROAS - account performing above target",
+        "severity": "info",
+        "emoji": "✅"
+      },
+      {
+        "condition": "roas >= 2.0 and roas < 3.0",
+        "message": "🟡 ROAS within acceptable range but below 3x target",
+        "severity": "warning",
+        "emoji": "🟡"
+      },
+      {
+        "condition": "roas < 2.0",
+        "message": "🔴 ROAS below target - immediate optimization needed",
+        "severity": "urgent",
+        "emoji": "🔴"
+      },
+      {
+        "condition": "cpa > 60",
+        "message": "⚠️ CPA elevated - review audience targeting and creative fatigue",
+        "severity": "warning",
+        "emoji": "⚠️"
+      },
+      {
+        "condition": "ctr < 1.0",
+        "message": "⚠️ Low CTR (<1%) - creative refresh recommended",
+        "severity": "warning",
+        "emoji": "⚠️"
+      },
+      {
+        "condition": "alert_ads_count > 0",
+        "message": "🚨 URGENT: {alert_ads_count} ads burning $30+ with zero conversions - pause immediately",
+        "severity": "urgent",
+        "emoji": "🚨"
+      },
+      {
+        "condition": "winner_ads_count > 0",
+        "message": "🚀 {winner_ads_count} winning ads (3x+ ROAS) - scale budget on top performers",
+        "severity": "info",
+        "emoji": "🚀"
+      },
+      {
+        "condition": "winner_ads_count == 0 and spend > 500",
+        "message": "🟡 No individual ads hit 3x ROAS threshold - test new creative angles",
+        "severity": "warning",
+        "emoji": "🟡"
+      },
+      {
+        "condition": "email_campaigns_count == 0",
+        "message": "📧 No email campaigns sent yesterday - opportunity to re-engage database",
+        "severity": "info",
+        "emoji": "📧"
+      },
+      {
+        "condition": "loser_ads_count >= 5",
+        "message": "⚠️ {loser_ads_count} ads underperforming (<2x ROAS) - consider pausing or refreshing",
+        "severity": "warning",
+        "emoji": "⚠️"
+      }
+    ],
+    "custom_rules": []
+  },
+  
+  "output": {
+    "channel": "telegram",
+    "recipients": ["COO", "Creative Director", "CTO"],
+    "channel_config": {
+      "telegram_chat_id": "[REDACTED]"
+    },
+    "format": "text",
+    "timezone": "America/New_York",
+    "include_footer": true,
+    "footer_names": ["Joaquin", "Cristina", "Eric"]
+  },
+  
+  "schedule": {
+    "frequency": "daily",
+    "time": "09:00",
+    "days": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]
+  },
+  
+  "features": {
+    "account_summary": true,
+    "campaign_breakdown": true,
+    "creative_analysis": true,
+    "email_performance": true,
+    "insights_recommendations": true,
+    "budget_pacing": false,
+    "trend_analysis": false,
+    "day_over_day_comparison": false,
+    "week_over_week_comparison": false
+  },
+  
+  "data_retention": {
+    "store_historical_data": false,
+    "retention_days": 90,
+    "database_connection": null
+  }
+}
