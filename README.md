@@ -104,6 +104,7 @@ That's the moat.
 **What it does:** Automates creative production from brief → approval → production → QA → delivery
 
 **Real numbers:**
+- 42-106x ROI in 6 months
 - 10-40x cost reduction per asset (vs agency)
 - 4-10x speed increase (hours vs weeks)
 - 80% reduction in creative director time
@@ -138,42 +139,51 @@ That's the moat.
 
 ---
 
-### ⚠️ Foundation Exists (Components Available, Needs Extraction)
+#### 3. [Sales Pipeline Engine](systems/sales-pipeline-engine/)
+**What it does:** Automates sales pipeline management from lead → qualification → outreach → follow-up → close
 
-#### 3. Sales Pipeline Engine
-**What it would do:** Automates sales pipeline management from lead → qualification → outreach → follow-up → close
+**Real numbers:**
+- 72x ROI in 6 months
+- 9.1 hrs/week time saved (80% reduction)
+- $130K annual value (time + revenue + quality)
+- 80-90% stale deal reduction
+- 5-8% win rate improvement
 
-**Available components:**
-- HubSpot daily sync (21 crons running)
-- Deal pipeline tracking
-- Follow-up alerts
-- Wholesale account monitoring
+**Configure for:**
+- CRM integration (HubSpot, Salesforce, Pipedrive, Zoho, Google Sheets, or none)
+- Pipeline stages (customizable 3-9 stages)
+- Deal scoring (size, engagement, stage, timeline)
+- Follow-up cadences
+- Team structure (solo → 10+ reps)
 
-**Status:** salesbot has the patterns, needs abstraction for non-HubSpot CRMs
-
----
-
-#### 4. Supply Chain Intelligence
-**What it would do:** Monitors vendors, tracks shipments, flags delays, manages documentation
-
-**Available components:**
-- Freight email monitoring (KLN, Flexport, DB Schenker)
-- PO tracking (partial)
-- Shipment delay detection
-
-**Status:** opsbot has email intelligence, needs structured data layer
+**Examples:** B2B wholesale (HubSpot, 9 stages, 3-person team), SaaS (Pipedrive, 8 stages, 5-person team), Solo founder (Google Sheets, 7 stages)
 
 ---
 
-#### 5. Inventory Watchdog
-**What it would do:** Monitors stock levels, forecasts demand, triggers reorders, flags anomalies
+#### 4. [Inventory Watchdog](systems/inventory-watchdog/)
+**What it does:** Monitors stock levels, forecasts demand, triggers reorders, flags anomalies, tracks fulfillment
 
-**Available components:**
-- NetSuite inventory monitoring (15 crons)
-- Low stock alerts
-- Order pacing forecast
+**Real numbers:**
+- 110x ROI in 6 months
+- 87% time reduction (<2 hrs/week from 15-20 hrs/week)
+- 90% stockout reduction (31 → 3 events in 6 months)
+- $127K in prevented stockouts
+- $48K freed in working capital (overstock reduction)
 
-**Status:** shipbot works, needs abstraction for Shopify/WooCommerce/BigCommerce
+**Configure for:**
+- Inventory system (NetSuite, Shopify, WooCommerce, Amazon, Google Sheets)
+- SKU count (1-50, 50-200, 200-1000, 1000+)
+- Warehouse/location count (1, 2-3, 4-10, 10+)
+- Sales channels (DTC, Amazon FBA, wholesale, retail)
+- Reorder thresholds (days-of-supply vs unit-count)
+
+**Examples:** DTC eyewear (NetSuite, 893 SKUs, 15 warehouses, multi-channel), Apparel (Shopify, 187 SKUs, single 3PL, DTC only), B2B wholesale (Google Sheets, 342 SKUs, 2 warehouses)
+
+---
+
+### 🔴 Identified But Not Built (Patterns Documented, No Implementation)
+
+5. **Supply Chain Intelligence** — Monitors vendors, tracks shipments, flags delays, manages documentation
 
 ---
 
@@ -293,12 +303,12 @@ python3 systems/static-content-engine/scripts/brief_generator.py \
 
 ## Roadmap
 
-**Current state:** 2 systems ready to deploy (Static Content, Marketing Performance)
+**Current state:** 4 systems ready to deploy (Static Content, Marketing Performance, Sales Pipeline, Inventory Watchdog)
 
 **Next:**
-- Extract Sales Pipeline Engine (salesbot 21 crons)
-- Extract Inventory Watchdog (shipbot)
-- Extract Supply Chain Intelligence (opsbot)
+- Extract Supply Chain Intelligence (opsbot 6 crons)
+- Extract Support Triage Engine
+- Extract Customer Success Monitoring
 - Build intake methodology training
 - Create deployment playbooks per industry
 
