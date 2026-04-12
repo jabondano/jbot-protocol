@@ -188,7 +188,7 @@ socialbot generates weekly content calendar
 
 ## What We Learned (Live Deployment Lessons)
 
-1. **VPS can't manage Discord API** — `403: error code: 1010` (Cloudflare blocks datacenter IPs). Channel creation and moves must be done manually from a browser or local bot session.
+1. **VPS can't manage Discord API** — `403: error code: 1010` (Cloudflare blocks datacenter IPs). Channel creation and moves must be done manually from a browser or local bot session. Work around with browser console scripts when automation is required.
 
 2. **Start with fewer channels** — 3 channels per category is better than 10. Add when the workflow exists, not before.
 
@@ -197,6 +197,21 @@ socialbot generates weekly content calendar
 4. **Telegram is not optional** — Discord alone misses the executive. The two-channel model (Discord work floor + Telegram exec layer) is the correct architecture.
 
 5. **Bot identity matters** — Each bot should have a clear SOUL.md with its domain, philosophy, and routing rules. Ambiguity = noise.
+
+6. **One bot, one channel** — Don't have multiple bots posting to the same channel without clear ownership rules. Channel = domain. Bot = domain owner. Confusion happens when two bots overlap.
+
+7. **Functional channels beat role-named channels** — Name channels after what work happens there, not what team owns it. `#dev-bot` over `#engineering`. `#eos` over `#operations-rythmn`.
+
+8. **The EOS channel pattern** — Any company-wide operating system (EOS, OKRs, rocks) deserves its own Discord channel, owned by the orchestrator bot (jbot equivalent). This is where scorecard output, weekly pulse, and rock status get posted. Wire this to your primary orchestrator, not a domain-specific bot.
+
+9. **devbot is a separate Discord application** — Engineering bots that touch code repos should have their own Discord bot application (separate token, separate identity) so code-related output is clearly attributed. Don't share tokens between bots with different domains.
+
+10. **Service restart patterns kill bots** — When deploying bot services via systemd:
+    - Do NOT use `fuser -k [port]/tcp` in `ExecStartPre` — it will SIGKILL the running bot on every restart cycle
+    - Use `Restart=on-failure` not `Restart=always`
+    - Use `KillMode=control-group` to ensure clean process group teardown
+    - Add `StartLimitBurst` to prevent infinite loops after misconfiguration
+    - Avoid port conflicts by assigning each bot a unique port from a documented registry
 
 ---
 
