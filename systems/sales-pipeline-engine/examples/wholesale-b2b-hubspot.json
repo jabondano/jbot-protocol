@@ -1,0 +1,420 @@
+{
+  "company": {
+    "name": "Acme Wholesale Co",
+    "sales_motion": "hybrid",
+    "customer_type": "b2b",
+    "average_deal_size": 15000,
+    "average_sales_cycle_days": 45,
+    "annual_revenue_target": 722000,
+    "deployment_date": "2026-02-01",
+    "timezone": "America/New_York"
+  },
+  
+  "crm": {
+    "type": "hubspot",
+    "access_level": "admin",
+    "api_credentials": {
+      "access_token": "$HUBSPOT_ACCESS_TOKEN"
+    },
+    "sync_frequency": "hourly",
+    "custom_fields": [
+      {
+        "name": "product_line",
+        "field_type": "picklist",
+        "crm_field_id": "product_line_custom",
+        "required": false
+      },
+      {
+        "name": "lead_source",
+        "field_type": "picklist",
+        "crm_field_id": "hs_analytics_source",
+        "required": true
+      },
+      {
+        "name": "icp_score",
+        "field_type": "number",
+        "crm_field_id": "icp_score_custom",
+        "required": false
+      }
+    ],
+    "rate_limits": {
+      "requests_per_minute": 100,
+      "requests_per_day": 40000
+    }
+  },
+  
+  "pipeline": {
+    "stages": [
+      {
+        "name": "New Lead",
+        "crm_stage_id": "1285050142",
+        "probability": 0.1,
+        "order": 0,
+        "average_duration_days": 3,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["dealname", "hubspot_owner_id"]
+      },
+      {
+        "name": "Contacted",
+        "crm_stage_id": "1285050143",
+        "probability": 0.15,
+        "order": 1,
+        "average_duration_days": 5,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["dealname", "hubspot_owner_id", "closedate"]
+      },
+      {
+        "name": "Qualification",
+        "crm_stage_id": "1285050144",
+        "probability": 0.25,
+        "order": 2,
+        "average_duration_days": 7,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["dealname", "hubspot_owner_id", "amount", "closedate"]
+      },
+      {
+        "name": "Discovery Complete",
+        "crm_stage_id": "1285050145",
+        "probability": 0.4,
+        "order": 3,
+        "average_duration_days": 10,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["dealname", "hubspot_owner_id", "amount", "closedate"]
+      },
+      {
+        "name": "Proposal Sent",
+        "crm_stage_id": "1285050146",
+        "probability": 0.6,
+        "order": 4,
+        "average_duration_days": 14,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["dealname", "hubspot_owner_id", "amount", "closedate"]
+      },
+      {
+        "name": "Negotiation",
+        "crm_stage_id": "1285227026",
+        "probability": 0.75,
+        "order": 5,
+        "average_duration_days": 7,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["dealname", "hubspot_owner_id", "amount", "closedate"]
+      },
+      {
+        "name": "Contract Review",
+        "crm_stage_id": "1285227027",
+        "probability": 0.9,
+        "order": 6,
+        "average_duration_days": 5,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["dealname", "hubspot_owner_id", "amount", "closedate"]
+      },
+      {
+        "name": "Closed Won",
+        "crm_stage_id": "1285050147",
+        "probability": 1.0,
+        "order": 7,
+        "is_closed_won": true,
+        "is_closed_lost": false
+      },
+      {
+        "name": "Closed Lost",
+        "crm_stage_id": "1285050148",
+        "probability": 0.0,
+        "order": 8,
+        "is_closed_won": false,
+        "is_closed_lost": true
+      }
+    ]
+  },
+  
+  "team": {
+    "size": "2-3",
+    "members": [
+      {
+        "name": "Jim Bruce",
+        "email": "jbruce@acmewholesale.co",
+        "role": "Optical Sales Director",
+        "crm_owner_id": "87374447",
+        "territory": "Optical/Eyewear",
+        "product_line": "Optical",
+        "notification_channel": "telegram"
+      },
+      {
+        "name": "Matt Berry",
+        "email": "mberry@acmewholesale.co",
+        "role": "PPE Sales Director",
+        "crm_owner_id": "87374446",
+        "territory": "Safety/PPE",
+        "product_line": "Safety",
+        "notification_channel": "telegram"
+      },
+      {
+        "name": "Amy Farruggio",
+        "email": "amy@acmewholesale.co",
+        "role": "Wholesale Associate",
+        "crm_owner_id": "87374448",
+        "territory": "Support",
+        "product_line": "Both",
+        "notification_channel": "email"
+      }
+    ],
+    "assignment_logic": "product-based",
+    "team_reports": [
+      {
+        "name": "Optical Pipeline",
+        "team_members": ["Jim Bruce", "Amy Farruggio"],
+        "filter_criteria": "product_line = Optical"
+      },
+      {
+        "name": "Safety/PPE Pipeline",
+        "team_members": ["Matt Berry", "Amy Farruggio"],
+        "filter_criteria": "product_line = Safety"
+      }
+    ]
+  },
+  
+  "lead_sources": {
+    "sources": [
+      "website-forms",
+      "inbound-email",
+      "linkedin",
+      "referrals",
+      "events-tradeshows"
+    ],
+    "highest_volume_source": "website-forms",
+    "capture_method": "automatic-webhook",
+    "source_tracking": true
+  },
+  
+  "followup": {
+    "cadences": {
+      "first_touch_delay_days": 3,
+      "second_touch_delay_days": 7,
+      "third_touch_delay_days": 14,
+      "custom_cadences": [
+        {
+          "stage": "Proposal Sent",
+          "delay_days": 5,
+          "template_id": "proposal-followup"
+        },
+        {
+          "stage": "Negotiation",
+          "delay_days": 3,
+          "template_id": "negotiation-check-in"
+        }
+      ]
+    },
+    "cold_threshold": {
+      "days_inactive": 30,
+      "follow_up_attempts": 3,
+      "auto_mark_cold": false
+    },
+    "stale_detection": {
+      "warning_days": 7,
+      "urgent_days": 14,
+      "critical_days": 30
+    },
+    "automation_enabled": true,
+    "templates": [
+      {
+        "id": "proposal-followup",
+        "name": "Proposal Follow-up",
+        "stage": "Proposal Sent",
+        "touch_number": 1,
+        "subject": "Re: {{company_name}} Proposal",
+        "body": "Hi {{contact_name}},\n\nFollowing up on the proposal I sent last week. Do you have any questions I can answer?\n\nBest,\n{{owner_name}}"
+      },
+      {
+        "id": "negotiation-check-in",
+        "name": "Negotiation Check-in",
+        "stage": "Negotiation",
+        "touch_number": 1,
+        "subject": "Re: {{company_name}} - Next Steps",
+        "body": "Hi {{contact_name}},\n\nJust checking in on where we stand. Are there any remaining questions or concerns I can address?\n\nBest,\n{{owner_name}}"
+      }
+    ]
+  },
+  
+  "scoring": {
+    "enabled": true,
+    "weights": {
+      "deal_size": 30,
+      "engagement": 25,
+      "stage": 25,
+      "timeline": 20
+    },
+    "high_priority_threshold": 75,
+    "deal_size_tiers": {
+      "small": 5000,
+      "medium": 15000,
+      "large": 50000,
+      "enterprise": 100000
+    },
+    "engagement_signals": [
+      "email-reply",
+      "meeting-scheduled",
+      "proposal-viewed",
+      "demo-completed"
+    ],
+    "custom_criteria": [
+      {
+        "name": "referral_bonus",
+        "field": "lead_source",
+        "weight": 10,
+        "scoring_logic": "if lead_source == 'referral', add 10 points"
+      }
+    ],
+    "icp_rubric": {
+      "company_size": {
+        "min_employees": 50,
+        "max_employees": 5000
+      },
+      "industry_fit": [
+        "Optical/Eyewear",
+        "Safety/PPE",
+        "Manufacturing",
+        "Distribution"
+      ],
+      "budget_signals": [
+        "previous_orders",
+        "credit_approved",
+        "budget_confirmed"
+      ],
+      "decision_maker_access": true,
+      "urgency_indicators": [
+        "urgent_need",
+        "close_date_within_30_days",
+        "competitor_mention"
+      ]
+    }
+  },
+  
+  "reporting": {
+    "frequency": "daily",
+    "schedule": {
+      "time": "09:00",
+      "days": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"],
+      "cron_expression": "0 9 * * 1-6"
+    },
+    "delivery": {
+      "channel": "telegram",
+      "recipients": [
+        "Joaquin Abondano (COO)",
+        "Jim Bruce (Optical)",
+        "Matt Berry (Safety)"
+      ],
+      "channel_config": {
+        "telegram_chat_id": "8569898992"
+      },
+      "include_footer": true,
+      "footer_names": [
+        "Joaquin Abondano",
+        "Jim Bruce",
+        "Matt Berry"
+      ]
+    },
+    "detail_level": "detailed",
+    "sections": {
+      "action_items": true,
+      "closing_this_week": true,
+      "top_deals": true,
+      "stale_deals": true,
+      "pipeline_snapshot": true,
+      "data_quality": true,
+      "team_breakdown": true,
+      "stage_distribution": true
+    },
+    "top_deals_count": 5
+  },
+  
+  "alerts": {
+    "stale_deals": {
+      "enabled": true,
+      "threshold_days": 14
+    },
+    "high_priority_deals": {
+      "enabled": true,
+      "deal_size_threshold": 25000
+    },
+    "overdue_close_dates": {
+      "enabled": true,
+      "alert_days_before": 3
+    },
+    "missing_data": {
+      "enabled": true,
+      "required_fields": ["amount", "owner", "close_date"]
+    },
+    "conversion_rate_drop": {
+      "enabled": false,
+      "threshold_percent": 20
+    }
+  },
+  
+  "integrations": {
+    "email_platform": {
+      "provider": "gmail",
+      "track_engagement": true
+    },
+    "calendar": {
+      "provider": "google-calendar",
+      "track_meetings": true
+    },
+    "accounting": {
+      "provider": "netsuite",
+      "sync_invoices": false
+    },
+    "project_management": {
+      "provider": "none",
+      "link_deals_to_projects": false
+    }
+  },
+  
+  "performance_targets": {
+    "pipeline_value": 1850000,
+    "deals_per_month": 25,
+    "win_rate_percent": 35,
+    "average_sales_cycle_days": 45,
+    "conversion_rate_by_stage": [
+      {"stage": "New Lead", "target_percent": 60},
+      {"stage": "Contacted", "target_percent": 70},
+      {"stage": "Qualification", "target_percent": 65},
+      {"stage": "Discovery Complete", "target_percent": 70},
+      {"stage": "Proposal Sent", "target_percent": 65},
+      {"stage": "Negotiation", "target_percent": 85},
+      {"stage": "Contract Review", "target_percent": 95}
+    ],
+    "sales_director_hours_per_week": 3
+  },
+  
+  "data_quality": {
+    "required_fields": [
+      "dealname",
+      "amount",
+      "closedate",
+      "hubspot_owner_id"
+    ],
+    "validation_rules": [
+      {
+        "field": "amount",
+        "rule": "must be > 0 for deals past Qualification stage",
+        "severity": "error"
+      },
+      {
+        "field": "closedate",
+        "rule": "must be set for deals past Contacted stage",
+        "severity": "warning"
+      }
+    ],
+    "deduplication": {
+      "enabled": true,
+      "match_fields": ["dealname", "company"]
+    }
+  }
+}

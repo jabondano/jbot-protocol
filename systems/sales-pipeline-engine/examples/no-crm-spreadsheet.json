@@ -1,0 +1,330 @@
+{
+  "company": {
+    "name": "Bootstrapped Consulting Co",
+    "sales_motion": "outbound",
+    "customer_type": "b2b",
+    "average_deal_size": 8500,
+    "average_sales_cycle_days": 30,
+    "annual_revenue_target": 350000,
+    "deployment_date": "2026-04-01",
+    "timezone": "America/Chicago"
+  },
+  
+  "crm": {
+    "type": "google-sheets",
+    "access_level": "admin",
+    "api_credentials": {
+      "client_id": "$GOOGLE_CLIENT_ID",
+      "client_secret": "$GOOGLE_CLIENT_SECRET",
+      "refresh_token": "$GOOGLE_REFRESH_TOKEN"
+    },
+    "sync_frequency": "daily",
+    "custom_fields": [
+      {
+        "name": "industry",
+        "field_type": "text",
+        "crm_field_id": "column_E",
+        "required": true
+      },
+      {
+        "name": "contact_method",
+        "field_type": "text",
+        "crm_field_id": "column_F",
+        "required": false
+      },
+      {
+        "name": "proposal_link",
+        "field_type": "text",
+        "crm_field_id": "column_J",
+        "required": false
+      }
+    ]
+  },
+  
+  "pipeline": {
+    "stages": [
+      {
+        "name": "Prospect",
+        "crm_stage_id": "Prospect",
+        "probability": 0.1,
+        "order": 0,
+        "average_duration_days": 5,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["company_name", "contact_name"]
+      },
+      {
+        "name": "Contacted",
+        "crm_stage_id": "Contacted",
+        "probability": 0.2,
+        "order": 1,
+        "average_duration_days": 7,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["company_name", "contact_name", "contact_method"]
+      },
+      {
+        "name": "Meeting Scheduled",
+        "crm_stage_id": "Meeting Scheduled",
+        "probability": 0.4,
+        "order": 2,
+        "average_duration_days": 5,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["company_name", "contact_name", "meeting_date"]
+      },
+      {
+        "name": "Proposal Sent",
+        "crm_stage_id": "Proposal Sent",
+        "probability": 0.6,
+        "order": 3,
+        "average_duration_days": 10,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["company_name", "contact_name", "amount", "proposal_link"]
+      },
+      {
+        "name": "Negotiation",
+        "crm_stage_id": "Negotiation",
+        "probability": 0.8,
+        "order": 4,
+        "average_duration_days": 7,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["company_name", "contact_name", "amount", "close_date"]
+      },
+      {
+        "name": "Won",
+        "crm_stage_id": "Won",
+        "probability": 1.0,
+        "order": 5,
+        "is_closed_won": true,
+        "is_closed_lost": false
+      },
+      {
+        "name": "Lost",
+        "crm_stage_id": "Lost",
+        "probability": 0.0,
+        "order": 6,
+        "is_closed_won": false,
+        "is_closed_lost": true
+      }
+    ],
+    "custom_stage_mapping": {
+      "New": "Prospect",
+      "Initial Contact": "Contacted",
+      "Call Scheduled": "Meeting Scheduled",
+      "Quote Sent": "Proposal Sent",
+      "Closed - Won": "Won",
+      "Closed - Lost": "Lost"
+    }
+  },
+  
+  "team": {
+    "size": "solo",
+    "members": [
+      {
+        "name": "Alex Johnson",
+        "email": "alex@bootstrappedconsulting.com",
+        "role": "Founder / Sales",
+        "crm_owner_id": "alex",
+        "notification_channel": "telegram"
+      }
+    ],
+    "assignment_logic": "manual"
+  },
+  
+  "lead_sources": {
+    "sources": [
+      "linkedin",
+      "referrals",
+      "cold-outreach",
+      "inbound-email"
+    ],
+    "highest_volume_source": "linkedin",
+    "capture_method": "manual",
+    "source_tracking": true
+  },
+  
+  "followup": {
+    "cadences": {
+      "first_touch_delay_days": 2,
+      "second_touch_delay_days": 5,
+      "third_touch_delay_days": 10
+    },
+    "cold_threshold": {
+      "days_inactive": 21,
+      "follow_up_attempts": 3,
+      "auto_mark_cold": false
+    },
+    "stale_detection": {
+      "warning_days": 7,
+      "urgent_days": 14,
+      "critical_days": 21
+    },
+    "automation_enabled": false,
+    "templates": []
+  },
+  
+  "scoring": {
+    "enabled": true,
+    "weights": {
+      "deal_size": 20,
+      "engagement": 40,
+      "stage": 30,
+      "timeline": 10
+    },
+    "high_priority_threshold": 65,
+    "deal_size_tiers": {
+      "small": 3000,
+      "medium": 8000,
+      "large": 15000,
+      "enterprise": 30000
+    },
+    "engagement_signals": [
+      "email-reply",
+      "meeting-scheduled"
+    ],
+    "custom_criteria": [
+      {
+        "name": "warm_referral",
+        "field": "lead_source",
+        "weight": 20,
+        "scoring_logic": "if lead_source == 'referral', add 20 points"
+      }
+    ],
+    "icp_rubric": {
+      "company_size": {
+        "min_employees": 10,
+        "max_employees": 500
+      },
+      "industry_fit": [
+        "Technology",
+        "Professional Services",
+        "Healthcare",
+        "Manufacturing"
+      ],
+      "budget_signals": [
+        "replied_to_outreach",
+        "scheduled_meeting",
+        "asked_for_proposal"
+      ],
+      "decision_maker_access": true,
+      "urgency_indicators": [
+        "project_timeline_mentioned",
+        "budget_available",
+        "pain_point_urgent"
+      ]
+    }
+  },
+  
+  "reporting": {
+    "frequency": "daily",
+    "schedule": {
+      "time": "08:30",
+      "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+      "cron_expression": "30 8 * * 1-5"
+    },
+    "delivery": {
+      "channel": "telegram",
+      "recipients": [
+        "Alex Johnson"
+      ],
+      "channel_config": {
+        "telegram_chat_id": "123456789"
+      },
+      "include_footer": false
+    },
+    "detail_level": "summary",
+    "sections": {
+      "action_items": true,
+      "closing_this_week": true,
+      "top_deals": true,
+      "stale_deals": true,
+      "pipeline_snapshot": true,
+      "data_quality": false,
+      "team_breakdown": false,
+      "stage_distribution": true
+    },
+    "top_deals_count": 3
+  },
+  
+  "alerts": {
+    "stale_deals": {
+      "enabled": true,
+      "threshold_days": 14
+    },
+    "high_priority_deals": {
+      "enabled": true,
+      "deal_size_threshold": 10000
+    },
+    "overdue_close_dates": {
+      "enabled": true,
+      "alert_days_before": 3
+    },
+    "missing_data": {
+      "enabled": true,
+      "required_fields": ["amount", "close_date"]
+    },
+    "conversion_rate_drop": {
+      "enabled": false
+    }
+  },
+  
+  "integrations": {
+    "email_platform": {
+      "provider": "gmail",
+      "track_engagement": false
+    },
+    "calendar": {
+      "provider": "google-calendar",
+      "track_meetings": false
+    },
+    "accounting": {
+      "provider": "none",
+      "sync_invoices": false
+    },
+    "project_management": {
+      "provider": "none",
+      "link_deals_to_projects": false
+    }
+  },
+  
+  "performance_targets": {
+    "pipeline_value": 150000,
+    "deals_per_month": 15,
+    "win_rate_percent": 30,
+    "average_sales_cycle_days": 30,
+    "conversion_rate_by_stage": [
+      {"stage": "Prospect", "target_percent": 40},
+      {"stage": "Contacted", "target_percent": 50},
+      {"stage": "Meeting Scheduled", "target_percent": 70},
+      {"stage": "Proposal Sent", "target_percent": 60},
+      {"stage": "Negotiation", "target_percent": 85}
+    ],
+    "sales_director_hours_per_week": 10
+  },
+  
+  "data_quality": {
+    "required_fields": [
+      "company_name",
+      "contact_name",
+      "stage"
+    ],
+    "validation_rules": [
+      {
+        "field": "amount",
+        "rule": "recommended for deals past Meeting Scheduled",
+        "severity": "info"
+      },
+      {
+        "field": "close_date",
+        "rule": "recommended for deals past Proposal Sent",
+        "severity": "info"
+      }
+    ],
+    "deduplication": {
+      "enabled": false
+    }
+  }
+}

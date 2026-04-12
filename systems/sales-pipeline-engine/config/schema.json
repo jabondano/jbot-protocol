@@ -1,0 +1,509 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Sales Pipeline Engine Configuration",
+  "description": "Configuration schema for the Sales Pipeline Engine system",
+  "type": "object",
+  "required": ["company", "crm", "pipeline", "scoring", "followup", "reporting"],
+  "properties": {
+    "company": {
+      "type": "object",
+      "required": ["name", "sales_motion"],
+      "properties": {
+        "name": {"type": "string"},
+        "sales_motion": {
+          "type": "string",
+          "enum": ["outbound", "inbound", "hybrid", "partner-channel", "self-serve"]
+        },
+        "customer_type": {
+          "type": "string",
+          "enum": ["b2b", "b2c", "mix"]
+        },
+        "average_deal_size": {"type": "number", "minimum": 0},
+        "average_sales_cycle_days": {"type": "number", "minimum": 1},
+        "annual_revenue_target": {"type": "number", "minimum": 0},
+        "deployment_date": {"type": "string", "format": "date"},
+        "timezone": {"type": "string"}
+      }
+    },
+    
+    "crm": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["hubspot", "salesforce", "pipedrive", "zoho", "close", "copper", "airtable", "google-sheets", "excel", "none", "custom"]
+        },
+        "access_level": {
+          "type": "string",
+          "enum": ["admin", "power-user", "standard", "read-only", "n/a"]
+        },
+        "api_credentials": {
+          "type": "object",
+          "properties": {
+            "access_token": {"type": "string"},
+            "api_key": {"type": "string"},
+            "client_id": {"type": "string"},
+            "client_secret": {"type": "string"},
+            "refresh_token": {"type": "string"},
+            "username": {"type": "string"},
+            "password": {"type": "string"}
+          }
+        },
+        "sync_frequency": {
+          "type": "string",
+          "enum": ["real-time-webhook", "hourly", "daily", "manual"]
+        },
+        "custom_fields": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "field_type"],
+            "properties": {
+              "name": {"type": "string"},
+              "field_type": {"type": "string", "enum": ["text", "number", "date", "picklist", "boolean", "currency"]},
+              "crm_field_id": {"type": "string"},
+              "required": {"type": "boolean"}
+            }
+          }
+        },
+        "rate_limits": {
+          "type": "object",
+          "properties": {
+            "requests_per_minute": {"type": "number", "minimum": 1},
+            "requests_per_day": {"type": "number", "minimum": 1}
+          }
+        }
+      }
+    },
+    
+    "pipeline": {
+      "type": "object",
+      "required": ["stages"],
+      "properties": {
+        "stages": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "type": "object",
+            "required": ["name", "probability", "order"],
+            "properties": {
+              "name": {"type": "string"},
+              "crm_stage_id": {"type": "string"},
+              "probability": {"type": "number", "minimum": 0, "maximum": 1},
+              "order": {"type": "number", "minimum": 0},
+              "average_duration_days": {"type": "number", "minimum": 0},
+              "is_closed_won": {"type": "boolean"},
+              "is_closed_lost": {"type": "boolean"},
+              "required_fields": {"type": "array", "items": {"type": "string"}},
+              "automation_triggers": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "event": {"type": "string", "enum": ["stage_entry", "stage_duration", "stage_exit"]},
+                    "action": {"type": "string", "enum": ["send_email", "create_task", "alert_owner", "update_field", "webhook"]}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "custom_stage_mapping": {
+          "type": "object",
+          "description": "Map your CRM's custom stage names/IDs to standard stages",
+          "additionalProperties": {"type": "string"}
+        }
+      }
+    },
+    
+    "team": {
+      "type": "object",
+      "properties": {
+        "size": {"type": "string", "enum": ["solo", "2-3", "4-10", "10+"]},
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "role"],
+            "properties": {
+              "name": {"type": "string"},
+              "email": {"type": "string", "format": "email"},
+              "role": {"type": "string"},
+              "crm_owner_id": {"type": "string"},
+              "territory": {"type": "string"},
+              "product_line": {"type": "string"},
+              "notification_channel": {"type": "string", "enum": ["email", "slack", "telegram", "discord", "none"]}
+            }
+          }
+        },
+        "assignment_logic": {
+          "type": "string",
+          "enum": ["round-robin", "territory-based", "product-based", "manual", "custom"]
+        },
+        "team_reports": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "team_members": {"type": "array", "items": {"type": "string"}},
+              "filter_criteria": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    
+    "lead_sources": {
+      "type": "object",
+      "properties": {
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["website-forms", "inbound-email", "cold-outreach", "linkedin", "referrals", "events-tradeshows", "paid-ads", "partnerships", "other"]
+          }
+        },
+        "highest_volume_source": {"type": "string"},
+        "capture_method": {
+          "type": "string",
+          "enum": ["automatic-webhook", "semi-automatic", "manual", "inconsistent"]
+        },
+        "source_tracking": {"type": "boolean"}
+      }
+    },
+    
+    "followup": {
+      "type": "object",
+      "required": ["cadences", "cold_threshold"],
+      "properties": {
+        "cadences": {
+          "type": "object",
+          "properties": {
+            "first_touch_delay_days": {"type": "number", "minimum": 0},
+            "second_touch_delay_days": {"type": "number", "minimum": 0},
+            "third_touch_delay_days": {"type": "number", "minimum": 0},
+            "custom_cadences": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "stage": {"type": "string"},
+                  "delay_days": {"type": "number", "minimum": 0},
+                  "template_id": {"type": "string"}
+                }
+              }
+            }
+          }
+        },
+        "cold_threshold": {
+          "type": "object",
+          "properties": {
+            "days_inactive": {"type": "number", "minimum": 1},
+            "follow_up_attempts": {"type": "number", "minimum": 1},
+            "auto_mark_cold": {"type": "boolean"}
+          }
+        },
+        "stale_detection": {
+          "type": "object",
+          "properties": {
+            "warning_days": {"type": "number", "minimum": 1},
+            "urgent_days": {"type": "number", "minimum": 1},
+            "critical_days": {"type": "number", "minimum": 1}
+          }
+        },
+        "automation_enabled": {"type": "boolean"},
+        "templates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"type": "string"},
+              "name": {"type": "string"},
+              "stage": {"type": "string"},
+              "touch_number": {"type": "number"},
+              "subject": {"type": "string"},
+              "body": {"type": "string"}
+            }
+          }
+        }
+      }
+    },
+    
+    "scoring": {
+      "type": "object",
+      "required": ["enabled", "weights"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "weights": {
+          "type": "object",
+          "required": ["deal_size", "engagement", "stage", "timeline"],
+          "properties": {
+            "deal_size": {"type": "number", "minimum": 0, "maximum": 100},
+            "engagement": {"type": "number", "minimum": 0, "maximum": 100},
+            "stage": {"type": "number", "minimum": 0, "maximum": 100},
+            "timeline": {"type": "number", "minimum": 0, "maximum": 100}
+          }
+        },
+        "high_priority_threshold": {"type": "number", "minimum": 0, "maximum": 100},
+        "deal_size_tiers": {
+          "type": "object",
+          "properties": {
+            "small": {"type": "number", "minimum": 0},
+            "medium": {"type": "number", "minimum": 0},
+            "large": {"type": "number", "minimum": 0},
+            "enterprise": {"type": "number", "minimum": 0}
+          }
+        },
+        "engagement_signals": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["email-reply", "meeting-scheduled", "proposal-viewed", "demo-completed", "website-visit", "content-download", "referral"]
+          }
+        },
+        "custom_criteria": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {"type": "string"},
+              "field": {"type": "string"},
+              "weight": {"type": "number", "minimum": 0, "maximum": 100},
+              "scoring_logic": {"type": "string"}
+            }
+          }
+        },
+        "icp_rubric": {
+          "type": "object",
+          "properties": {
+            "company_size": {
+              "type": "object",
+              "properties": {
+                "min_employees": {"type": "number"},
+                "max_employees": {"type": "number"}
+              }
+            },
+            "industry_fit": {"type": "array", "items": {"type": "string"}},
+            "budget_signals": {"type": "array", "items": {"type": "string"}},
+            "decision_maker_access": {"type": "boolean"},
+            "urgency_indicators": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    },
+    
+    "reporting": {
+      "type": "object",
+      "required": ["frequency", "delivery"],
+      "properties": {
+        "frequency": {
+          "type": "string",
+          "enum": ["daily", "weekly", "bi-weekly", "monthly", "custom"]
+        },
+        "schedule": {
+          "type": "object",
+          "properties": {
+            "time": {"type": "string", "pattern": "^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$"},
+            "days": {
+              "type": "array",
+              "items": {"type": "string", "enum": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"]}
+            },
+            "cron_expression": {"type": "string"}
+          }
+        },
+        "delivery": {
+          "type": "object",
+          "required": ["channel", "recipients"],
+          "properties": {
+            "channel": {
+              "type": "string",
+              "enum": ["telegram", "discord", "slack", "email", "webhook"]
+            },
+            "recipients": {
+              "type": "array",
+              "items": {"type": "string"},
+              "minItems": 1
+            },
+            "channel_config": {
+              "type": "object",
+              "properties": {
+                "telegram_chat_id": {"type": "string"},
+                "discord_webhook_url": {"type": "string", "format": "uri"},
+                "slack_webhook_url": {"type": "string", "format": "uri"},
+                "slack_channel": {"type": "string"},
+                "email_addresses": {
+                  "type": "array",
+                  "items": {"type": "string", "format": "email"}
+                }
+              }
+            },
+            "include_footer": {"type": "boolean"},
+            "footer_names": {
+              "type": "array",
+              "items": {"type": "string"}
+            }
+          }
+        },
+        "detail_level": {
+          "type": "string",
+          "enum": ["summary", "detailed", "custom"]
+        },
+        "sections": {
+          "type": "object",
+          "properties": {
+            "action_items": {"type": "boolean"},
+            "closing_this_week": {"type": "boolean"},
+            "top_deals": {"type": "boolean"},
+            "stale_deals": {"type": "boolean"},
+            "pipeline_snapshot": {"type": "boolean"},
+            "data_quality": {"type": "boolean"},
+            "team_breakdown": {"type": "boolean"},
+            "stage_distribution": {"type": "boolean"}
+          }
+        },
+        "top_deals_count": {"type": "number", "minimum": 1, "maximum": 20}
+      }
+    },
+    
+    "alerts": {
+      "type": "object",
+      "properties": {
+        "stale_deals": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "threshold_days": {"type": "number", "minimum": 1}
+          }
+        },
+        "high_priority_deals": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "deal_size_threshold": {"type": "number", "minimum": 0}
+          }
+        },
+        "overdue_close_dates": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "alert_days_before": {"type": "number", "minimum": 0}
+          }
+        },
+        "missing_data": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "required_fields": {
+              "type": "array",
+              "items": {"type": "string", "enum": ["amount", "owner", "close_date", "stage", "contact"]}
+            }
+          }
+        },
+        "conversion_rate_drop": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "threshold_percent": {"type": "number", "minimum": 0, "maximum": 100}
+          }
+        }
+      }
+    },
+    
+    "integrations": {
+      "type": "object",
+      "properties": {
+        "email_platform": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string", "enum": ["gmail", "outlook", "sendgrid", "mailgun", "none"]},
+            "track_engagement": {"type": "boolean"}
+          }
+        },
+        "calendar": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string", "enum": ["google-calendar", "outlook-calendar", "none"]},
+            "track_meetings": {"type": "boolean"}
+          }
+        },
+        "accounting": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string", "enum": ["quickbooks", "xero", "netsuite", "none"]},
+            "sync_invoices": {"type": "boolean"}
+          }
+        },
+        "project_management": {
+          "type": "object",
+          "properties": {
+            "provider": {"type": "string", "enum": ["asana", "monday", "clickup", "trello", "none"]},
+            "link_deals_to_projects": {"type": "boolean"}
+          }
+        },
+        "webhooks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "event": {"type": "string"},
+              "url": {"type": "string", "format": "uri"},
+              "method": {"type": "string", "enum": ["POST", "PUT", "PATCH"]},
+              "headers": {"type": "object"}
+            }
+          }
+        }
+      }
+    },
+    
+    "performance_targets": {
+      "type": "object",
+      "properties": {
+        "pipeline_value": {"type": "number", "minimum": 0},
+        "deals_per_month": {"type": "number", "minimum": 0},
+        "win_rate_percent": {"type": "number", "minimum": 0, "maximum": 100},
+        "average_sales_cycle_days": {"type": "number", "minimum": 0},
+        "conversion_rate_by_stage": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "stage": {"type": "string"},
+              "target_percent": {"type": "number", "minimum": 0, "maximum": 100}
+            }
+          }
+        },
+        "sales_director_hours_per_week": {"type": "number", "minimum": 0}
+      }
+    },
+    
+    "data_quality": {
+      "type": "object",
+      "properties": {
+        "required_fields": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "validation_rules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {"type": "string"},
+              "rule": {"type": "string"},
+              "severity": {"type": "string", "enum": ["error", "warning", "info"]}
+            }
+          }
+        },
+        "deduplication": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "match_fields": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    }
+  }
+}
