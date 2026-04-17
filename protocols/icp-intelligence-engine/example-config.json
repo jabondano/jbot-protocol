@@ -1,0 +1,223 @@
+{
+  "_comment": "Example configuration for Stackwise — a fictional B2B SaaS company that sells workflow automation to ops teams at mid-market companies. Replace all values with your own.",
+
+  "company": {
+    "name": "Stackwise",
+    "description": "Workflow automation platform for operations teams at mid-market companies (50–500 employees). Core product: visual process builder + integration layer that connects SaaS tools without code.",
+    "industry": "B2B SaaS",
+    "business_model": "subscription",
+    "product_catalog_path": "./context/product-catalog.md",
+    "brand_voice_path": "./context/brand-voice.md",
+    "positioning_path": "./context/positioning.md"
+  },
+
+  "brand": {
+    "primary_color": "#1A1A2E",
+    "secondary_color": "#4F46E5",
+    "accent_color": "#10B981",
+    "font": "Inter",
+    "logo_url": "https://stackwise.example.com/logo.svg",
+    "dashboard_title": "Stackwise ICP Intelligence Hub",
+    "copy_tone": "direct and data-driven — no fluff, no jargon"
+  },
+
+  "data_sources": {
+    "ad_platforms": [
+      {
+        "platform": "meta_ads",
+        "enabled": true,
+        "export_path": "./data/raw/meta-ads-export.csv",
+        "date_range_days": 90,
+        "account_id": "act_XXXXXXX",
+        "_note": "Export from Ads Manager: Campaigns view, all columns, last 90 days"
+      },
+      {
+        "platform": "linkedin_ads",
+        "enabled": true,
+        "export_path": "./data/raw/linkedin-ads-export.csv",
+        "date_range_days": 90,
+        "_note": "Campaign Manager → Reporting → Export all campaigns"
+      },
+      {
+        "platform": "google_ads",
+        "enabled": false,
+        "_note": "Not running Google Ads currently. Set enabled:true and add export_path to activate."
+      }
+    ],
+
+    "crm": {
+      "platform": "hubspot",
+      "export_path": "./data/raw/hubspot-contacts.csv",
+      "segment_tag_field": "hs_analytics_source_data_1",
+      "_note": "Export: Contacts → All contacts → Export. Include lifecycle stage, last activity, company size, MRR fields."
+    },
+
+    "email": {
+      "platform": "hubspot",
+      "export_path": "./data/raw/hubspot-email-performance.csv",
+      "_note": "Reports → Email → All emails → Export. Need: list/segment name, send count, open rate, CTR, unsubscribe rate."
+    },
+
+    "outreach": {
+      "platform": "apollo",
+      "enabled": true,
+      "export_path": "./data/raw/apollo-sequence-stats.csv",
+      "_note": "Apollo → Sequences → Analytics → Export all sequences. Need: sequence name, reply rate, meeting booked rate, step count."
+    }
+  },
+
+  "segments": {
+    "_comment": "These segment labels MUST match the labels used in your ad naming conventions and CRM tags. A2 maps raw data to these labels.",
+    "defined_segments": [
+      {
+        "segment_id": "seg_001",
+        "segment_name": "Ops-Heavy Scaleups",
+        "description": "Operations or RevOps leads at companies 100–300 employees that have outgrown spreadsheets but aren't ready for enterprise tools",
+        "crm_tag": "ops-scaleup",
+        "ad_naming_prefix": "OPS_SCALE"
+      },
+      {
+        "segment_id": "seg_002",
+        "segment_name": "Founder-Led SMBs",
+        "description": "Founders or CEOs at 10–50 employee companies managing operations themselves, looking for leverage",
+        "crm_tag": "founder-smb",
+        "ad_naming_prefix": "FOUND_SMB"
+      },
+      {
+        "segment_id": "seg_003",
+        "segment_name": "Enterprise IT Champions",
+        "description": "IT directors or department heads at 500+ employee companies trying to reduce shadow IT and consolidate tools",
+        "crm_tag": "enterprise-it",
+        "ad_naming_prefix": "ENT_IT"
+      },
+      {
+        "segment_id": "seg_004",
+        "segment_name": "Agency Ops Directors",
+        "description": "Operations or delivery leads at marketing/creative agencies managing complex multi-client workflows",
+        "crm_tag": "agency-ops",
+        "ad_naming_prefix": "AGENCY_OPS"
+      }
+    ]
+  },
+
+  "scoring": {
+    "scoring_weights": {
+      "ad_performance": 0.35,
+      "crm_health": 0.40,
+      "outreach_conversion": 0.25,
+      "_note": "Weighted toward CRM because Stackwise is primarily inbound-driven. Adjust if you shift to outbound-heavy motion."
+    },
+    "conviction_tiers": {
+      "core_threshold": 70,
+      "emerging_threshold": 45,
+      "_note": "Segments scoring >= 70 = Core, 45-69 = Emerging, < 45 = Speculative"
+    },
+    "minimum_data_for_scoring": {
+      "ad_spend_minimum_usd": 500,
+      "crm_contact_minimum": 25,
+      "outreach_sends_minimum": 50,
+      "_note": "Segments with data below these minimums get confidence=low regardless of score"
+    }
+  },
+
+  "pipeline": {
+    "agents": {
+      "A1": {
+        "model": "claude-sonnet-4-5",
+        "temperature": 0.3,
+        "max_tokens": 8000,
+        "output_path": "./outputs/a1-segments.json"
+      },
+      "A2": {
+        "model": "gpt-4.1",
+        "temperature": 0.1,
+        "max_tokens": 6000,
+        "output_path": "./outputs/a2-signals.json",
+        "conviction_output_path": "./outputs/a2-conviction.json"
+      },
+      "A3": {
+        "model": "claude-sonnet-4-6",
+        "temperature": 0.4,
+        "max_tokens": 10000,
+        "output_path": "./outputs/a3-hypotheses.json"
+      },
+      "A4": {
+        "model": "claude-sonnet-4-5",
+        "temperature": 0.3,
+        "max_tokens": 8000,
+        "output_path": "./outputs/dashboard-spec.md",
+        "_note": "A4 only runs on full pipeline cycles, not weekly refresh"
+      },
+      "A5": {
+        "model": "claude-sonnet-4-5",
+        "temperature": 0.1,
+        "max_tokens": 16000,
+        "output_dir": "./dashboard/",
+        "_note": "A5 only runs on full pipeline cycles. Weekly refresh skips to data.json update only."
+      },
+      "A6": {
+        "model": "claude-haiku-4-5",
+        "temperature": 0.1,
+        "max_tokens": 2000,
+        "output_path": "./outputs/a6-deployment-log.json"
+      }
+    },
+
+    "execution": {
+      "parallel_agents": ["A1", "A2"],
+      "sequential_chain": ["A3", "A4", "A5", "A6"],
+      "full_pipeline_agents": ["A1", "A2", "A3", "A4", "A5", "A6"],
+      "refresh_pipeline_agents": ["A1", "A2", "A3", "A5_data_only", "A6"],
+      "_note": "A5_data_only means: regenerate data.json only, skip HTML rebuild"
+    }
+  },
+
+  "deployment": {
+    "platform": "cloudflare_pages",
+    "project_name": "stackwise-icp-hub",
+    "source_dir": "./dashboard/",
+    "internal_page": "index.html",
+    "external_page": "agency.html",
+    "custom_domain": null,
+    "_note": "Set custom_domain to your domain string if you've configured one in Cloudflare Pages"
+  },
+
+  "refresh_schedule": {
+    "frequency": "weekly",
+    "cron": "0 6 * * 1",
+    "timezone": "UTC",
+    "automation": "github_actions",
+    "workflow_file": ".github/workflows/icp-refresh.yml",
+    "_note": "Monday 6am UTC. Adjust cron expression for your preferred day/time."
+  },
+
+  "data_layer": {
+    "type": "local_json",
+    "outputs_dir": "./outputs/",
+    "archive_runs": true,
+    "archive_dir": "./outputs/archive/",
+    "_note": "For production teams: switch type to 'supabase' and add supabase_url + supabase_key. Local JSON is fine for solo operators and small teams."
+  },
+
+  "notifications": {
+    "on_success": {
+      "enabled": false,
+      "channel": "slack",
+      "webhook_url": "",
+      "message_template": "✅ ICP Intelligence refreshed. {{n_segments}} segments, {{n_hypotheses}} hypotheses. Dashboard: {{dashboard_url}}"
+    },
+    "on_failure": {
+      "enabled": false,
+      "channel": "slack",
+      "webhook_url": "",
+      "message_template": "❌ ICP refresh failed at {{failed_agent}}. Check logs: {{log_url}}"
+    }
+  },
+
+  "meta": {
+    "protocol_version": "1.0.0",
+    "config_created": "2025-01-01",
+    "last_modified": "2025-01-01",
+    "owner": "your-name@company.com"
+  }
+}
