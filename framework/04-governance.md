@@ -220,12 +220,85 @@ The fastest way to create alert fatigue is to send a notification every time an 
 
 This principle preserves the signal-to-noise ratio of notification channels. When a message does appear, the team knows it requires attention.
 
+## Kill Hierarchy
+
+Kill procedures are trust infrastructure. A team that has never rehearsed stopping its fleet will hesitate when something goes wrong — and hesitation during an incident is how a bad hour becomes a bad week. Define three levels before you need any of them:
+
+| Level | Scope | Procedure | When |
+|-------|-------|-----------|------|
+| **Level 1 — Isolate a bot** | One agent | Stop its service, revoke its credentials, preserve its logs and workspace untouched | One bot misbehaving: runaway loop, bad outputs, suspected compromise of one credential |
+| **Level 2 — Freeze the fleet** | All scheduled execution | Disable all cron schedules fleet-wide without tearing down infrastructure; interactive use may continue | Shared dependency gone bad (poisoned data source, broken integration) where every scheduled run would compound the damage |
+| **Level 3 — Full stop (nuclear)** | Everything | Stop all services, rotate all credentials, snapshot all state for post-mortem before touching anything | Confirmed compromise, or you cannot establish what's wrong and the cost of running exceeds the cost of stopping |
+
+**Rules that make the hierarchy work:**
+
+- **Each level has a named owner and a written one-page procedure.** During an incident nobody should be reading API docs to figure out how to revoke a token.
+- **Preserve before you fix.** At every level, logs and state are evidence. The post-mortem is worth more than the five minutes saved by wiping and restarting.
+- **Rehearse Level 1 quarterly.** Pick a bot, kill it, time the procedure, bring it back. The rehearsal also validates that your restore path works — an untested restore is a second incident waiting inside the first.
+- **Authority is pre-delegated.** Whoever is on watch can execute Level 1 without approval. Level 2 needs one operator decision. Level 3 needs the system owner — but the *procedure* must be executable by anyone, because the owner may be asleep.
+
+## Decommissioning & Succession
+
+The kill hierarchy handles emergencies. Decommissioning is the *planned* version — retiring an agent deliberately — and it fails in quieter, more expensive ways. The failure mode isn't the retired bot; it's everything that silently depended on it.
+
+A production lesson from our own fleet: when we retired our executive hub bot, its scheduled jobs were reassigned and its service masked — the visible work moved cleanly. What we missed was discovered only in an audit weeks later: two reporting layers had died with it, because the hub was their only *consumer*. The bots feeding those layers kept writing signals nobody read. Nothing alerted, because producing a signal isn't an error — it's just waste, invisibly accumulating.
+
+**Two rules fall out of this:**
+
+1. **Every signal needs a named consumer that survives the producer's retirement.** Before retiring an agent, enumerate not just what it *does* but what it *reads*. Anything only-it-reads either gets a new consumer or gets explicitly shut off at the source. A signal without a consumer should fail loudly, not accumulate silently.
+2. **Every layer needs a survivor plan.** If a capability (a narrative report, a health score, an escalation path) exists only because one agent maintains it, that capability dies with the agent. Decide deliberately: reassign it, productize it into shared infrastructure, or kill it on purpose — never by accident.
+
+**Decommissioning checklist:**
+
+- [ ] Inventory the agent's outputs: who consumes each one? Reassign or sunset each explicitly.
+- [ ] Inventory the agent's *inputs*: which signals does only this agent consume? Stop them at the source or reassign the consumer.
+- [ ] Reassign or retire its scheduled jobs — verify each landed by watching one full cycle on the new owner.
+- [ ] Mask (don't delete) its service and archive its workspace — you will want its memory and logs for at least one quarter.
+- [ ] Revoke its credentials. A retired bot with live credentials is an unmonitored attack surface.
+- [ ] Run the audit 2–4 weeks later: grep for orphaned signals, dead dashboard sections, and references to the retired agent in other bots' instructions.
+- [ ] Update the protocol docs and fleet diagrams. Stale architecture docs cost the next operator real hours.
+
+Retirement is a normal lifecycle event — fleets that can't retire agents calcify around their earliest design decisions. Our hub-and-spoke topology was right for a 4-bot fleet and wrong for a 10-bot one; retiring the hub was correct. The lesson is to retire *completely*.
+
+## Cost Discipline Is Governance, Not Optimization
+
+Model selection is usually framed as cost optimization. At fleet scale, that framing is wrong — it's governance. When a cron job runs 30 times a month forever, the model assigned to it is a standing policy decision about what that task is *allowed* to consume.
+
+**Policy requirements:**
+
+- **Every scheduled job declares its model — and its effort level — explicitly** in its job definition, next to its schedule. No job inherits "whatever the default is." An undeclared model assignment is a governance gap, the same class of problem as an undeclared write permission.
+- **Tier escalation is a reviewed change.** Promoting a job from a mid-tier to a top-tier model goes through the same lightweight review as granting a new system permission — one line in a log, but a deliberate line. (Frontier-tier models are never assigned to recurring jobs by default; see the [Model Selection Guide](../implementation/model-selection-guide.md).)
+- **Token spend is a fleet-health KPI.** Track cost per job per month. A job whose consumption drifts upward without a corresponding scope change is malfunctioning — drift is a defect signal, not a billing detail.
+- **Budget caps fail loud.** When a job hits its monthly token budget, it should stop and notify, not silently degrade to a cheaper model. Silent degradation produces subtly worse outputs that erode trust in everything the fleet publishes.
+
+## Publication Trust Zones
+
+Fleets that publish artifacts — dashboards, reports, status pages — need an explicit boundary between what's internal and what's public. This becomes existential the moment the organization is a public company, but every company has data it doesn't want indexed by a search engine.
+
+**The architecture:**
+
+| Zone | Access | What belongs there |
+|------|--------|--------------------|
+| **Internal** | Authenticated (SSO/access gateway) | Everything by default: operational dashboards, raw metrics, drafts |
+| **Public** | None (open URL) | Only artifacts explicitly cleared for external eyes: partner-facing pages, published reports |
+
+**The rules that make it safe for agents:**
+
+1. **Visibility is declared, never inferred.** Every publish action carries an explicit `visibility` parameter. There is no default-public path anywhere in the pipeline.
+2. **When unsure → internal.** Agents are instructed to never guess "public." A misfiled internal artifact is a UX annoyance; a misfiled public artifact is an incident (and for a public company, potentially a disclosure problem).
+3. **The public path is structurally distinct** — a separate URL prefix, a separate directory — so a human can audit "everything public" with one listing, and so access-control rules attach to structure rather than convention.
+4. **Public paths require human review in version control.** A CODEOWNERS rule (or equivalent) on the public directory means no agent can publish externally without a named human approving the change. This is the one place where human-in-the-loop is non-negotiable regardless of how much you trust the fleet.
+5. **Publication is treated as permanent.** External content may be cached, indexed, or archived the moment it's live. The review standard is "fine if a journalist reads it," not "we can take it down."
+
 ## Deliverables
 
 1. **Governance Policy** — Rules and guidelines for agent behavior
 2. **Risk Matrix** — Actions categorized by risk level
 3. **Escalation Procedures** — Clear paths for human involvement
 4. **Audit Framework** — Logging and review requirements
+5. **Kill & Decommissioning Runbook** — Three-level kill procedures + the planned-retirement checklist
+6. **Cost Policy** — Per-job model/effort assignments and token-budget KPIs
+7. **Publication Policy** — Trust-zone definitions and the public-path review rule
 
 ---
 

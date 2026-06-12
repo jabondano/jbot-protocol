@@ -2,6 +2,8 @@
 
 **Deploying Division-Based AI Agents with OpenClaw**
 
+> **Architecture note (June 2026):** this guide documents the original hub-and-spoke deployment, with an executive hub bot (`jbot`) fronting the fleet. That topology ran in production for ~5 months and was then deliberately retired: the hub was decommissioned and its functions redistributed to the division specialists. The patterns below (per-division agents, cron scheduling, shared data layer, messaging integrations) remain current; treat the executive-hub routing sections as a documented evolutionary stage, not the recommendation. For why the hub came out — and the decommissioning checklist that emerged from it — see [Pillar 4: Governance → Decommissioning & Succession](../framework/04-governance.md).
+
 ---
 
 ## Overview

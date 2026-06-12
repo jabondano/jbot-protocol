@@ -4,6 +4,34 @@ All notable changes to the JBOT Protocol will be documented in this file.
 
 ---
 
+## [v2.2] — 2026-06-12
+
+### Added
+- **Systems layer** (`systems/`) — 4 pre-built configurable systems rescued from an orphaned branch, sanitized and anonymized: Inventory Watchdog, Sales Pipeline Engine, Static Content Engine, Marketing Performance Monitor. Each ships intake questionnaires, config schemas, example configs, and an anonymized deployment example.
+- **Copilot Pattern protocol** (`protocols/copilot-pattern/`) — ad hoc single-purpose internal tools: deterministic-core/AI-edges architecture, owner + manual + loop operating model, skills-as-products packaging, graduation path.
+- **Pillar 4 — Kill Hierarchy** — three-level kill procedures (isolate bot / freeze fleet / full stop) with rehearsal and authority rules. Closes the March gap analysis P1.
+- **Pillar 4 — Decommissioning & Succession** — planned-retirement checklist from the executive-hub retirement: every signal needs a consumer that survives its producer; every layer needs a survivor plan.
+- **Pillar 4 — Cost Discipline as Governance** — per-job model + effort assignments as policy, token spend as fleet-health KPI. Closes the March gap analysis P1.
+- **Pillar 4 — Publication Trust Zones** — internal/public zones, declared visibility, CODEOWNERS on public paths, "when unsure → internal".
+- **Pillar 3 — The Native-First Check** — pre-build platform check + deletion discipline (the cancelled-build case study).
+- **Pillar 3 — Empty Mapping Table failure mode** — the silent EDI cross-reference failure class; monitor the fallback path's volume.
+- **docs/MAINTENANCE.md** — how the protocol stays current with live operations (harvest loop, branch hygiene, sanitization gate).
+
+### Changed
+- **Model Selection Guide** — current June 2026 lineup and pricing (Haiku 4.5 $1/$5, Sonnet 4.6 $3/$15, Opus 4.8 $5/$25); new Tier 4 Frontier (Claude Fable 5, $10/$50) with the no-frontier-crons governance rule; effort parameter as a within-tier cost dial; recomputed budget tables.
+- **Fleet roster** (README + OpenClaw guide) — executive hub bot retired June 2026; flat specialist topology now recommended; hub-and-spoke sections marked as a documented evolutionary stage.
+- **Discovery interview v2 merged** — voice-first conversational flow with Master Context File output; tool-neutral header.
+- **README** — added Systems & Protocols section, full repo-structure refresh covering `protocols/`, `systems/`, `docs/`, framework 00/07/08.
+
+### Fixed
+- Case studies from the orphaned branch carried real-company attribution with non-public targets and unverifiable projected results — rewritten as anonymized, explicitly illustrative deployment examples; leaked identifiers (chat IDs, VPS IP, CRM object IDs, supplier/staff names) scrubbed.
+- JSON syntax error in static-content-engine config schema.
+
+### Unlogged March–April work (recorded retroactively)
+- Phase 0 Research Methodology (`framework/00`), Pillar 7 Agent Identity (`framework/07`), Evolution Layer (`framework/08`), Lattice + Discord architecture docs, Discord deployment guide with 10 live-deployment lessons, ICP Intelligence Engine protocol, pricing framework, ad creative workflow + copy brief template, sector research starter.
+
+---
+
 ## [v2.1.2] — 2026-02-18
 
 ### Added

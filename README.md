@@ -2,7 +2,7 @@
 
 **Building AI-Native Organizations That Scale Without Proportional Headcount**
 
-By Joaquin Abondano | [v2.1.2](CHANGELOG.md)
+By Joaquin Abondano | [v2.2](CHANGELOG.md)
 
 ---
 
@@ -95,12 +95,14 @@ Self-hosted multi-agent fleet with Telegram, phone IVR, and persistent division 
 
 | Agent | Division | Functions |
 |-------|----------|-----------|
-| jbot | Executive | Email, calendar, delegation, phone IVR |
+| opsbot | Operations | Supply chain, freight, vendor intel |
 | shipbot | Fulfillment | Order tracking, inventory, late alerts |
 | mktgbot | Marketing | Campaign performance, content drafting |
 | salesbot | Sales | CRM, pipeline tracking, lead scoring |
-| opsbot | Operations | Supply chain, freight, vendor intel |
+| financebot | Finance | Revenue dashboards, board reports |
 | sysbot | Systems | Fleet monitoring, cost watchdog |
+
+> **Topology note (June 2026):** the reference fleet originally ran hub-and-spoke around an executive hub bot. The hub was retired and its functions redistributed to the specialists — a deliberate decommissioning that surfaced its own lessons (every signal needs a consumer that survives the producer; see Pillar 4, Decommissioning & Succession). The protocol now recommends flat specialist topologies with a shared signal layer over executive-hub designs.
 
 See [implementation/openclaw-fleet.md](implementation/openclaw-fleet.md)
 
@@ -109,6 +111,25 @@ See [implementation/openclaw-fleet.md](implementation/openclaw-fleet.md)
 Not every task needs the most powerful model. Route by complexity and stakes to reduce costs 60-70%.
 
 See [implementation/model-selection-guide.md](implementation/model-selection-guide.md)
+
+---
+
+## Systems & Protocols (v2.2 — June 2026)
+
+The framework now ships two layers above the pillars:
+
+**Protocols** are named, reusable methodologies — the [Copilot Pattern](protocols/copilot-pattern/) (ad hoc single-purpose tools with proportional governance) and the [ICP Intelligence Engine](protocols/icp-intelligence-engine/) (self-refreshing customer profiles).
+
+**Systems** are pre-built, configurable implementations — not tools, not prompts, but complete operating systems extracted from production deployments and packaged with intake questionnaires, configuration schemas, and worked examples:
+
+| System | What it runs |
+|--------|--------------|
+| [Inventory Watchdog](systems/inventory-watchdog/) | Stock-level alerts, late-order detection, reorder recommendations |
+| [Sales Pipeline Engine](systems/sales-pipeline-engine/) | Pipeline hygiene, stale-deal detection, daily/weekly reports |
+| [Static Content Engine](systems/static-content-engine/) | QA-scored content generation with auto-routing thresholds |
+| [Marketing Performance Monitor](systems/marketing-performance-monitor/) | Cross-channel spend and performance alerting |
+
+Each system has been deployed at a real company, anonymized, and extracted into universal patterns. Fill out the system's `config/intake-v1.md`, adapt an example config, deploy on your fleet.
 
 ---
 
@@ -123,18 +144,38 @@ The framework has evolved significantly since v1. The 6 pillars remain valid. Wh
 ## Repository Structure
 
 ```
-/framework                              # The 6 Pillars
+/framework                              # The Pillars (Phase 0 → 6, plus extensions)
+  ├── 00-phase-0-research-methodology.md  Pre-deployment research, the Gap Map
   ├── 01-division-architecture.md       Org mapping, agent topology, team patterns
   ├── 02-knowledge-capture.md           Interview guides, process mining, decision journals
-  ├── 03-tool-integration.md            MCP deep-dive, integration spectrum, system catalog
-  ├── 04-governance.md                  Decision matrix, escalation, audit framework
+  ├── 03-tool-integration.md            MCP deep-dive, native-first check, failure modes
+  ├── 04-governance.md                  Escalation, kill hierarchy, decommissioning, trust zones
   ├── 05-change-management.md           Adoption curve, RACI matrix, training levels
-  └── 06-measurement-roi.md             ROI calculation, HAR metric, dashboarding
+  ├── 06-measurement-roi.md             ROI calculation, HAR metric, dashboarding
+  ├── 07-agent-identity.md              SOUL/MEMORY/schedule three-file architecture
+  └── 08-evolution-layer.md             Systems that improve themselves over time
+
+/protocols                              # Named, Reusable Methodologies
+  ├── copilot-pattern/                  Ad hoc single-purpose tools, governed proportionally
+  ├── icp-intelligence-engine/          Self-refreshing customer-profile pipeline (6 agents)
+  └── pricing-framework/                Engagement pricing methodology
+
+/systems                                # Pre-Built, Configurable Systems
+  ├── inventory-watchdog/               Stock alerts, late orders, reorder recommendations
+  ├── sales-pipeline-engine/            Pipeline hygiene, stale-deal detection, weekly reports
+  ├── static-content-engine/            QA-scored ad/content generation at volume
+  └── marketing-performance-monitor/    Cross-channel spend and performance alerts
 
 /implementation                         # Deployment Guides
   ├── openclaw-fleet.md                 Self-hosted multi-agent fleet
   ├── claude-code-guide.md              Claude Code + CLAUDE.md hierarchy
-  └── model-selection-guide.md          Haiku/Sonnet/Opus routing & cost analysis
+  └── model-selection-guide.md          Four-tier model routing & cost analysis
+
+/docs                                   # Architecture Deep-Dives
+  ├── LATTICE-ARCHITECTURE.md           Shared signal layer, three-tier memory
+  ├── DISCORD-ARCHITECTURE.md           Channel architecture for fleet operations
+  ├── GAP-ANALYSIS.md                   Protocol vs production-proven patterns
+  └── MAINTENANCE.md                    How this repo stays current with live operations
 
 /templates                              # Reusable Templates
   ├── DIVISION.md                       Document any business division
@@ -142,7 +183,9 @@ The framework has evolved significantly since v1. The 6 pillars remain valid. Wh
   ├── SYSTEMS.md                        Software & tool documentation
   ├── CUSTOM-INSTRUCTIONS.md            Claude Project instructions
   ├── AGENT-SKILL.md                    Agent skill definition (RFC 2119)
-  └── discovery-interview.md            Client discovery questions
+  ├── copy-brief.md                     Ad creative copy brief
+  ├── discord-design-generator.md       Intake → Discord architecture
+  └── discovery-interview.md            Voice-first discovery → Master Context File
 
 /case-studies                           # Real-World Evidence
   ├── anonymized-implementation.md      Public hardware company case study
@@ -156,11 +199,14 @@ The framework has evolved significantly since v1. The 6 pillars remain valid. Wh
   ├── import-export-distribution.md     Consumer goods import/distribution
   └── manufacturing-operations.md       Vertically integrated manufacturing
 
-/guides                                 # Getting Started
-  └── getting-started.md                Zero to first agent in 30 minutes
+/guides                                 # How-To Guides
+  ├── getting-started.md                Zero to first agent in 30 minutes
+  ├── discord-server-deployment.md      Fleet channels + 10 live-deployment lessons
+  └── ad-creative-workflow.md           AI ad creative production workflow
 
 /research                               # Background Research
-  └── enterprise-agentic-ai-guide.md    McKinsey, Deloitte, MIT CISR synthesis
+  ├── enterprise-agentic-ai-guide.md    McKinsey, Deloitte, MIT CISR synthesis
+  └── sector-research-starter.md        Per-sector research starting points
 
 /lead-magnet                            # Marketing
   └── playbook-outline.md              Downloadable PDF outline

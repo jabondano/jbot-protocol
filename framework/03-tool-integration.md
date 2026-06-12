@@ -197,6 +197,9 @@ Managed MCP servers and third-party APIs fail in predictable ways. Understanding
 | **Auth token expiry** | Operations fail after working for days or weeks | OAuth tokens expire (commonly 60-90 days); refresh token not implemented | Track token expiry dates; implement automated refresh; set calendar reminders for manual rotation |
 | **Rate limiting** | Intermittent 429 errors during high-activity periods | Too many API calls in a short window; multiple bots hitting the same endpoint | Stagger cron schedules across bots; implement exponential backoff; cache frequently-read data |
 | **Schema drift** | Agent sends valid-looking requests that the API rejects | Source system updated its API schema; MCP server not updated to match | Pin MCP server versions; monitor for API changelog updates; test integrations after source system upgrades |
+| **Empty mapping table** | Integration "works" — every transaction lands on a fallback/error record instead of the right one | EDI/sync integrations route through a cross-reference table (partner item # → internal item #); if it was never populated, nothing errors — every record matches the catch-all | Treat mapping tables as go-live deliverables, not plumbing; alert when fallback-record volume exceeds zero; after fixing, verify against the next **live** transaction, not a replay |
+
+The empty-mapping-table case deserves emphasis because it is the purest form of silent integration failure: a production EDI integration of ours ran for months with every inbound order landing on a generic error item, because the cross-reference table behind it had zero rows. Each order *arrived* — so nobody looked. The backlog was hundreds of orders deep before line-item reporting exposed it. Any integration that maps external identifiers to internal ones carries this failure mode, and the mitigation is to monitor the *fallback path's volume* — because the fallback working perfectly is exactly what hides the defect.
 
 ### Custom MCP Fallback Pattern
 
@@ -227,6 +230,22 @@ Managed MCP (reads) → Custom MCP (writes) → Direct API (curl templates in sk
 **Stage 3 — Direct API via skill templates.** For simple, well-understood operations (e.g., a single POST to a known endpoint), skip the MCP overhead entirely. Embed the curl command directly in the agent's skill file with parameterized templates. This eliminates a dependency and gives the agent direct, auditable control.
 
 **Not every integration reaches Stage 3.** Many systems work perfectly well at Stage 1 or Stage 2 indefinitely. Only move right when a concrete limitation forces you to.
+
+## The Native-First Check (and Deletion Discipline)
+
+AI-assisted building has made custom tools so cheap that a new failure mode has appeared: **building things your platforms already do.** When a workflow tool costs an afternoon, nobody runs the build-vs-buy analysis anymore — and the result is custom infrastructure shadowing native features, each piece carrying permanent maintenance, sync, and training costs that the afternoon estimate never included.
+
+**The check, before any build:** spend thirty minutes confirming the platform you already pay for doesn't ship this natively — including features added since you last looked. Platforms ship constantly; your mental model of "what Shopify/NetSuite/HubSpot can do" is probably 18 months old. The check costs thirty minutes; the shadow system costs forever.
+
+**The harder discipline is deletion.** A real case from our operations: we designed and partially built a custom inventory-transfer tracking system — schema, tables, workflow, the works. Mid-build, the native-first check (run late, but run) found the commerce platform had shipped native transfers with receiving workflows and full location support. We cancelled our build and deleted the tables.
+
+That deletion felt like waste. It was the opposite:
+
+- **Sunk cost is not a reason to ship.** The custom system would have been *worse* — a second source of truth to reconcile, invisible to every other native feature (reporting, mobile apps, permissions) that integrates with the platform's own data model.
+- **A cancelled build is a cheap lesson; a shipped shadow system is an expensive one.** The afternoon was the tuition. Shipping it would have converted tuition into debt.
+- **Write the deletion down.** Record what was built, why it was cancelled, and what native feature replaced it — otherwise someone (possibly you) rebuilds it next year.
+
+**Rule of thumb:** custom builds belong in the *connective tissue between* systems of record — the audits, monitors, and cross-system reports no vendor ships. They almost never belong in replicating a system of record's own core competency. If your build stores the same entity the platform already stores, stop and run the check again.
 
 ## Credential Architecture
 
