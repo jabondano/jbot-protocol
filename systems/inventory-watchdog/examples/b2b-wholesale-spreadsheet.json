@@ -1,0 +1,262 @@
+{
+  "company": {
+    "name": "Industrial Supply Co",
+    "industry": "b2b-wholesale",
+    "deployment_date": "2026-03-15",
+    "timezone": "America/Chicago",
+    "sku_count": 342,
+    "warehouse_count": 2
+  },
+  
+  "inventory_system": {
+    "type": "google-sheets",
+    "integration_method": "csv-export",
+    "csv_export_path": "https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid=0",
+    "csv_schedule": "0 */6 * * *"
+  },
+  
+  "warehouses": [
+    {
+      "id": "CHI",
+      "name": "Chicago Main Warehouse",
+      "type": "primary",
+      "location_code": "CHI-01",
+      "country": "USA",
+      "tracked": true,
+      "allocation_percent": 70,
+      "reorder_capable": true
+    },
+    {
+      "id": "DAL",
+      "name": "Dallas Distribution Center",
+      "type": "primary",
+      "location_code": "DAL-01",
+      "country": "USA",
+      "tracked": true,
+      "allocation_percent": 30,
+      "reorder_capable": true
+    }
+  ],
+  
+  "skus": {
+    "tracking_mode": "all",
+    "exclusions": {
+      "patterns": ["%OBSOLETE%", "%DISC%"],
+      "inactive": true,
+      "discontinued": true
+    }
+  },
+  
+  "thresholds": {
+    "low_stock": {
+      "mode": "unit-count",
+      "unit_count": 25,
+      "velocity_lookback_days": 60
+    },
+    "out_of_stock": {
+      "trigger_at_zero": true,
+      "include_in_transit": false
+    },
+    "overstock": {
+      "enabled": false
+    },
+    "reorder_point": {
+      "mode": "manual",
+      "safety_factor": 2.0,
+      "lead_time_days": 30
+    }
+  },
+  
+  "sales_channels": [
+    {
+      "name": "B2B Orders",
+      "type": "wholesale",
+      "platform": "manual",
+      "allocation_percent": 100,
+      "warehouse_id": "CHI",
+      "track_separately": false
+    }
+  ],
+  
+  "late_orders": {
+    "enabled": false
+  },
+  
+  "channel_balance": {
+    "enabled": true,
+    "allocation_targets": {
+      "chicago": 70,
+      "dallas": 30
+    },
+    "imbalance_threshold_percent": 25,
+    "auto_rebalance": false
+  },
+  
+  "fulfillment_tracking": {
+    "enabled": false
+  },
+  
+  "reorder_process": {
+    "mode": "manual",
+    "auto_generate_pos": false,
+    "approval_required": true,
+    "suppliers": [
+      {
+        "id": "acme-industrial",
+        "name": "ACME Industrial Supply",
+        "contact_email": "orders@acmeindustrial.com",
+        "lead_time_days": 30,
+        "minimum_order_quantity": 100,
+        "skus": ["TOOL%", "HDWR%"],
+        "auto_approve": false
+      },
+      {
+        "id": "midwest-distributors",
+        "name": "Midwest Distributors",
+        "contact_email": "sales@midwestdist.com",
+        "lead_time_days": 14,
+        "minimum_order_quantity": 50,
+        "skus": ["SAFTY%", "PPE%"],
+        "auto_approve": false
+      },
+      {
+        "id": "global-imports",
+        "name": "Global Imports LLC",
+        "contact_email": "orders@globalimports.net",
+        "lead_time_days": 60,
+        "minimum_order_quantity": 500,
+        "skus": ["ELEC%", "MACH%"],
+        "auto_approve": false
+      }
+    ],
+    "po_integration": {
+      "enabled": false,
+      "system": "manual"
+    }
+  },
+  
+  "alerts": {
+    "recipients": [
+      {
+        "name": "Tom (Owner)",
+        "role": "ceo",
+        "delivery_channel": "email",
+        "email": "tom@industrialsupply.co",
+        "severity_filter": ["critical"]
+      },
+      {
+        "name": "Jennifer (Purchasing)",
+        "role": "buyer",
+        "delivery_channel": "email",
+        "email": "jennifer@industrialsupply.co",
+        "severity_filter": ["critical", "warning", "attention"]
+      },
+      {
+        "name": "Chicago Warehouse",
+        "role": "warehouse-manager",
+        "delivery_channel": "email",
+        "email": "warehouse-chi@industrialsupply.co",
+        "severity_filter": ["critical"]
+      },
+      {
+        "name": "Dallas Warehouse",
+        "role": "warehouse-manager",
+        "delivery_channel": "email",
+        "email": "warehouse-dal@industrialsupply.co",
+        "severity_filter": ["critical"]
+      }
+    ],
+    "severity_levels": {
+      "critical": {
+        "emoji": "🔴",
+        "notify_immediately": true
+      },
+      "warning": {
+        "emoji": "🟠",
+        "batch_delivery": true
+      },
+      "monitor": {
+        "emoji": "🟡",
+        "daily_digest_only": true
+      }
+    },
+    "quiet_hours": {
+      "enabled": true,
+      "start_time": "18:00",
+      "end_time": "07:00",
+      "exceptions": ["critical"]
+    }
+  },
+  
+  "reporting": {
+    "frequency": "twice-daily",
+    "schedule": {
+      "cron_expression": "0 8,16 * * *",
+      "timezone": "America/Chicago"
+    },
+    "delivery": {
+      "channel": "email",
+      "recipients": ["jennifer@industrialsupply.co", "tom@industrialsupply.co"],
+      "include_charts": false
+    },
+    "sections": {
+      "stock_alerts": true,
+      "late_orders": false,
+      "reorder_recommendations": true,
+      "channel_balance": true,
+      "fulfillment_lag": false,
+      "open_purchase_orders": false,
+      "aged_purchase_orders": false
+    },
+    "detail_level": "detailed"
+  },
+  
+  "integrations": {
+    "slack": {
+      "enabled": false
+    },
+    "telegram": {
+      "enabled": false
+    },
+    "discord": {
+      "enabled": false
+    },
+    "supabase": {
+      "enabled": false
+    },
+    "accounting_system": {
+      "type": "quickbooks",
+      "sync_pos": false
+    }
+  },
+  
+  "performance_targets": {
+    "stockout_prevention_rate_percent": 85,
+    "late_order_target_days": 0,
+    "fulfillment_target_hours": 0,
+    "overstock_reduction_percent": 20,
+    "ops_manager_hours_per_week": 5
+  },
+  
+  "data_quality": {
+    "required_fields": ["SKU", "Product Name", "Quantity", "Location", "Reorder Point"],
+    "validation_rules": [
+      {
+        "field": "Quantity",
+        "rule": "must be >= 0",
+        "severity": "error"
+      },
+      {
+        "field": "Reorder Point",
+        "rule": "should be > 0",
+        "severity": "warning"
+      },
+      {
+        "field": "SKU",
+        "rule": "must be unique per location",
+        "severity": "error"
+      }
+    ],
+    "auto_correct": false
+  }
+}

@@ -1,6 +1,6 @@
 # Discovery Interview Guide
 
-> **For Codex / ChatGPT users:** Upload this file and say "Run the discovery interview." You can answer by voice. At the end, generate the Master Context File using the format at the bottom of this document.
+> **Run it with any AI assistant** (Claude, ChatGPT, or your agent of choice): upload this file and say "Run the discovery interview." You can answer by voice. At the end, the assistant generates the Master Context File using the format at the bottom of this document.
 
 ---
 

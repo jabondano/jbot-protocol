@@ -1,0 +1,260 @@
+{
+  "config_version": "1.0",
+  "generated_date": "2026-04-12",
+  
+  "company": {
+    "name": "[Apparel Brand - Example]",
+    "industry": "dtc-ecommerce",
+    "deployment_date": "2026-04-01",
+    "primary_contact": {
+      "name": "[Example Founder]",
+      "role": "Founder",
+      "email": "founder@apparelbrand.com"
+    }
+  },
+  
+  "brands": [
+    {
+      "id": "main",
+      "name": "[Main Brand]",
+      "voice": ["casual", "playful", "bold"],
+      "visual_identity": {
+        "colors": ["#FF5733", "#FFC300", "#000000", "#FFFFFF"],
+        "fonts": ["Futura", "Helvetica Neue"],
+        "logo_rules": "Always on solid background, never over busy patterns"
+      }
+    }
+  ],
+  
+  "channels": {
+    "paid": [
+      {
+        "platform": "meta",
+        "formats": ["4:5", "9:16", "1:1"],
+        "minimum_tier": 3,
+        "api_credentials": true
+      },
+      {
+        "platform": "tiktok",
+        "formats": ["9:16"],
+        "minimum_tier": 3,
+        "api_credentials": false
+      },
+      {
+        "platform": "pinterest",
+        "formats": ["9:16", "1:1"],
+        "minimum_tier": 3,
+        "api_credentials": false
+      }
+    ],
+    "organic": ["instagram", "tiktok", "pinterest", "email"],
+    "wholesale_b2b": false,
+    "retail_pos": false
+  },
+  
+  "production": {
+    "capabilities": {
+      "photo_shoots": {
+        "available": false,
+        "frequency": "never",
+        "budget_per_shoot": 0
+      },
+      "product_photography": {
+        "exists": true,
+        "quality": "good-1080p"
+      },
+      "3d_rendering": {
+        "available": false,
+        "provider": null
+      },
+      "in_house_designer": {
+        "available": false,
+        "hours_per_week": 0
+      },
+      "external_agency": {
+        "available": false,
+        "cost_per_asset": 0,
+        "turnaround_days": 0
+      }
+    },
+    "budget": {
+      "monthly_total": 1200,
+      "cost_per_asset_target": 3,
+      "breakdown": {
+        "design": 0,
+        "photography": 0,
+        "agency": 0,
+        "tools": 200
+      }
+    },
+    "tier_definitions": {
+      "tier_1_hero": {
+        "production_method": "ai-composite",
+        "use_cases": ["UGC creator network", "User-generated content sourcing"],
+        "cost_range": "$5-10/asset (UGC sourced)"
+      },
+      "tier_2_campaign": {
+        "production_method": "ai-composite",
+        "use_cases": ["Product + lifestyle composites", "Seasonal campaigns"],
+        "cost_range": "$0.50/asset (AI composite)"
+      },
+      "tier_3_evergreen": {
+        "production_method": "ai-composite",
+        "use_cases": ["Catalog assets", "A/B tests", "Social organic"],
+        "cost_range": "$0.28/asset (AI composite)"
+      },
+      "tier_4_operational": {
+        "production_method": "designer",
+        "use_cases": ["Format resizes", "Text overlays", "Sale/promo badges"],
+        "cost_range": "$0/asset (automated Figma templates)"
+      }
+    }
+  },
+  
+  "approval": {
+    "brief_approver": {
+      "name": "[Founder]",
+      "role": "Founder",
+      "channel": "slack",
+      "sla_hours": 48,
+      "backup_approver": null
+    },
+    "final_approver": {
+      "name": "[Founder]",
+      "role": "Founder",
+      "same_as_brief": true
+    },
+    "auto_approve_scenarios": ["format-resize", "tier-4-operational"],
+    "legal_compliance_review": {
+      "required": false,
+      "reviewer_role": null,
+      "turnaround_hours": 0,
+      "review_triggers": []
+    },
+    "risk_tolerance": "aggressive"
+  },
+  
+  "qa": {
+    "dimensions": [
+      {
+        "name": "brand_voice",
+        "description": "Matches playful, casual brand tone",
+        "weight": 0.2,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "lifestyle_fit",
+        "description": "Model/scene matches target customer lifestyle",
+        "weight": 0.25,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "hook_clarity",
+        "description": "Hook is clear and compelling for awareness level",
+        "weight": 0.15,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "visual_quality",
+        "description": "Lighting and composition meet social media standards",
+        "weight": 0.2,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "trend_relevance",
+        "description": "Aligns with current fashion/social trends",
+        "weight": 0.1,
+        "validation_method": "automated-vision"
+      },
+      {
+        "name": "channel_fit",
+        "description": "Format and style appropriate for destination platform",
+        "weight": 0.1,
+        "validation_method": "automated-vision"
+      }
+    ],
+    "thresholds": {
+      "auto_approve": 6,
+      "flag_for_review": 5,
+      "auto_reject": 3
+    },
+    "scoring_model": "claude-sonnet-vision",
+    "validation_rules": [
+      {
+        "rule": "Product must be clearly visible",
+        "severity": "blocker"
+      },
+      {
+        "rule": "No competitor logos in frame",
+        "severity": "blocker"
+      },
+      {
+        "rule": "Lifestyle scene should feel authentic, not staged",
+        "severity": "warning"
+      }
+    ]
+  },
+  
+  "performance": {
+    "targets": {
+      "volume_per_month": 25,
+      "turnaround_hours": 48,
+      "creative_director_hours_per_week": 3,
+      "auto_route_percentage": 85
+    },
+    "fatigue_detection": {
+      "enabled": true,
+      "threshold_days": 7,
+      "threshold_impressions": 50000,
+      "threshold_frequency": 5.0
+    },
+    "feedback_loop": {
+      "enabled": true,
+      "data_sources": ["meta-ads-api"],
+      "metrics_tracked": ["ctr", "roas", "conversions", "engagement"]
+    }
+  },
+  
+  "audience": {
+    "primary_awareness_level": 1,
+    "secondary_awareness_level": 2,
+    "icps": [
+      {
+        "id": "gen-z-trendsetter",
+        "name": "Gen Z Trendsetter",
+        "description": "18-25, TikTok-native, fashion-forward, sustainability-conscious",
+        "awareness_level": 1,
+        "primary_channel": "tiktok"
+      },
+      {
+        "id": "millennial-casual",
+        "name": "Millennial Casual Dresser",
+        "description": "26-35, comfort-first, values quality, shops Instagram",
+        "awareness_level": 2,
+        "primary_channel": "meta"
+      },
+      {
+        "id": "pinterest-planner",
+        "name": "Pinterest Planner",
+        "description": "28-40, plans outfits, style-conscious, moderate budget",
+        "awareness_level": 2,
+        "primary_channel": "pinterest"
+      }
+    ],
+    "funnel_stages": ["awareness", "consideration", "decision"],
+    "retargeting": true
+  },
+  
+  "technical": {
+    "openclaw_deployed": true,
+    "storage": {
+      "provider": "r2",
+      "bucket": "apparel-brand-assets",
+      "cdn_url": "https://assets.apparelbrand.com"
+    },
+    "delivery": {
+      "destinations": ["meta-ads-api", "manual"]
+    },
+    "data_sources": ["meta-ads-api", "shopify"]
+  }
+}

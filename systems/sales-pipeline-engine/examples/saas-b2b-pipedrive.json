@@ -1,0 +1,452 @@
+{
+  "company": {
+    "name": "CloudMetrics SaaS",
+    "sales_motion": "inbound",
+    "customer_type": "b2b",
+    "average_deal_size": 28000,
+    "average_sales_cycle_days": 60,
+    "annual_revenue_target": 2400000,
+    "deployment_date": "2026-03-01",
+    "timezone": "America/Los_Angeles"
+  },
+  
+  "crm": {
+    "type": "pipedrive",
+    "access_level": "admin",
+    "api_credentials": {
+      "api_key": "$PIPEDRIVE_API_KEY"
+    },
+    "sync_frequency": "real-time-webhook",
+    "custom_fields": [
+      {
+        "name": "company_size",
+        "field_type": "picklist",
+        "crm_field_id": "company_size_field",
+        "required": true
+      },
+      {
+        "name": "use_case",
+        "field_type": "text",
+        "crm_field_id": "use_case_field",
+        "required": false
+      },
+      {
+        "name": "seats",
+        "field_type": "number",
+        "crm_field_id": "seats_field",
+        "required": true
+      },
+      {
+        "name": "plan_tier",
+        "field_type": "picklist",
+        "crm_field_id": "plan_tier_field",
+        "required": false
+      }
+    ],
+    "rate_limits": {
+      "requests_per_minute": 60,
+      "requests_per_day": 10000
+    }
+  },
+  
+  "pipeline": {
+    "stages": [
+      {
+        "name": "Lead",
+        "crm_stage_id": "1",
+        "probability": 0.05,
+        "order": 0,
+        "average_duration_days": 2,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["title", "person_id"]
+      },
+      {
+        "name": "Qualified",
+        "crm_stage_id": "2",
+        "probability": 0.15,
+        "order": 1,
+        "average_duration_days": 5,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["title", "person_id", "value"]
+      },
+      {
+        "name": "Demo Scheduled",
+        "crm_stage_id": "3",
+        "probability": 0.3,
+        "order": 2,
+        "average_duration_days": 7,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["title", "person_id", "value", "expected_close_date"]
+      },
+      {
+        "name": "Demo Completed",
+        "crm_stage_id": "4",
+        "probability": 0.5,
+        "order": 3,
+        "average_duration_days": 10,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["title", "person_id", "value", "expected_close_date"]
+      },
+      {
+        "name": "Proposal Sent",
+        "crm_stage_id": "5",
+        "probability": 0.7,
+        "order": 4,
+        "average_duration_days": 14,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["title", "person_id", "value", "expected_close_date"]
+      },
+      {
+        "name": "Negotiation",
+        "crm_stage_id": "6",
+        "probability": 0.85,
+        "order": 5,
+        "average_duration_days": 10,
+        "is_closed_won": false,
+        "is_closed_lost": false,
+        "required_fields": ["title", "person_id", "value", "expected_close_date"]
+      },
+      {
+        "name": "Closed Won",
+        "crm_stage_id": "7",
+        "probability": 1.0,
+        "order": 6,
+        "is_closed_won": true,
+        "is_closed_lost": false
+      },
+      {
+        "name": "Closed Lost",
+        "crm_stage_id": "8",
+        "probability": 0.0,
+        "order": 7,
+        "is_closed_won": false,
+        "is_closed_lost": true
+      }
+    ]
+  },
+  
+  "team": {
+    "size": "4-10",
+    "members": [
+      {
+        "name": "Sarah Chen",
+        "email": "sarah@cloudmetrics.io",
+        "role": "VP Sales",
+        "crm_owner_id": "12345",
+        "territory": "Enterprise",
+        "notification_channel": "slack"
+      },
+      {
+        "name": "Mike Torres",
+        "email": "mike@cloudmetrics.io",
+        "role": "AE - Mid-Market",
+        "crm_owner_id": "12346",
+        "territory": "Mid-Market",
+        "notification_channel": "slack"
+      },
+      {
+        "name": "Lisa Park",
+        "email": "lisa@cloudmetrics.io",
+        "role": "AE - SMB",
+        "crm_owner_id": "12347",
+        "territory": "SMB",
+        "notification_channel": "slack"
+      },
+      {
+        "name": "David Kim",
+        "email": "david@cloudmetrics.io",
+        "role": "SDR",
+        "crm_owner_id": "12348",
+        "territory": "Inbound",
+        "notification_channel": "slack"
+      }
+    ],
+    "assignment_logic": "territory-based",
+    "team_reports": [
+      {
+        "name": "Enterprise Pipeline",
+        "team_members": ["Sarah Chen"],
+        "filter_criteria": "company_size >= 1000"
+      },
+      {
+        "name": "Mid-Market Pipeline",
+        "team_members": ["Mike Torres"],
+        "filter_criteria": "company_size >= 200 AND company_size < 1000"
+      },
+      {
+        "name": "SMB Pipeline",
+        "team_members": ["Lisa Park"],
+        "filter_criteria": "company_size < 200"
+      }
+    ]
+  },
+  
+  "lead_sources": {
+    "sources": [
+      "website-forms",
+      "paid-ads",
+      "linkedin",
+      "referrals",
+      "cold-outreach"
+    ],
+    "highest_volume_source": "paid-ads",
+    "capture_method": "automatic-webhook",
+    "source_tracking": true
+  },
+  
+  "followup": {
+    "cadences": {
+      "first_touch_delay_days": 1,
+      "second_touch_delay_days": 3,
+      "third_touch_delay_days": 7,
+      "custom_cadences": [
+        {
+          "stage": "Demo Scheduled",
+          "delay_days": 1,
+          "template_id": "demo-reminder"
+        },
+        {
+          "stage": "Demo Completed",
+          "delay_days": 2,
+          "template_id": "demo-followup"
+        },
+        {
+          "stage": "Proposal Sent",
+          "delay_days": 3,
+          "template_id": "proposal-check-in"
+        }
+      ]
+    },
+    "cold_threshold": {
+      "days_inactive": 21,
+      "follow_up_attempts": 4,
+      "auto_mark_cold": true
+    },
+    "stale_detection": {
+      "warning_days": 5,
+      "urgent_days": 10,
+      "critical_days": 21
+    },
+    "automation_enabled": true,
+    "templates": [
+      {
+        "id": "demo-reminder",
+        "name": "Demo Reminder",
+        "stage": "Demo Scheduled",
+        "touch_number": 1,
+        "subject": "Tomorrow's Demo - {{company_name}}",
+        "body": "Hi {{contact_name}},\n\nLooking forward to our demo tomorrow at {{demo_time}}. I'll send the Zoom link 15 minutes before.\n\nBest,\n{{owner_name}}"
+      },
+      {
+        "id": "demo-followup",
+        "name": "Demo Follow-up",
+        "stage": "Demo Completed",
+        "touch_number": 1,
+        "subject": "Re: {{company_name}} Demo",
+        "body": "Hi {{contact_name}},\n\nThanks for the demo yesterday! Based on our conversation, I'm preparing a proposal for {{seats}} seats on the {{plan_tier}} plan.\n\nDo you have any questions before I send it over?\n\nBest,\n{{owner_name}}"
+      },
+      {
+        "id": "proposal-check-in",
+        "name": "Proposal Check-in",
+        "stage": "Proposal Sent",
+        "touch_number": 1,
+        "subject": "Re: {{company_name}} Proposal",
+        "body": "Hi {{contact_name}},\n\nJust checking in on the proposal I sent. Have you had a chance to review it with your team?\n\nHappy to answer any questions or adjust the proposal if needed.\n\nBest,\n{{owner_name}}"
+      }
+    ]
+  },
+  
+  "scoring": {
+    "enabled": true,
+    "weights": {
+      "deal_size": 25,
+      "engagement": 35,
+      "stage": 20,
+      "timeline": 20
+    },
+    "high_priority_threshold": 70,
+    "deal_size_tiers": {
+      "small": 10000,
+      "medium": 30000,
+      "large": 75000,
+      "enterprise": 150000
+    },
+    "engagement_signals": [
+      "email-reply",
+      "meeting-scheduled",
+      "demo-completed",
+      "proposal-viewed",
+      "website-visit",
+      "content-download"
+    ],
+    "custom_criteria": [
+      {
+        "name": "decision_maker_engaged",
+        "field": "decision_maker_role",
+        "weight": 15,
+        "scoring_logic": "if role in ['VP', 'Director', 'C-Level'], add 15 points"
+      },
+      {
+        "name": "competitor_mention",
+        "field": "competitors",
+        "weight": 10,
+        "scoring_logic": "if competitors mentioned, add 10 points (urgency signal)"
+      }
+    ],
+    "icp_rubric": {
+      "company_size": {
+        "min_employees": 50,
+        "max_employees": 10000
+      },
+      "industry_fit": [
+        "Technology",
+        "SaaS",
+        "E-commerce",
+        "Financial Services",
+        "Healthcare"
+      ],
+      "budget_signals": [
+        "budget_confirmed",
+        "existing_tools_paid",
+        "growth_stage"
+      ],
+      "decision_maker_access": true,
+      "urgency_indicators": [
+        "contract_expiring",
+        "growth_hiring",
+        "funding_announced",
+        "competitor_evaluation"
+      ]
+    }
+  },
+  
+  "reporting": {
+    "frequency": "daily",
+    "schedule": {
+      "time": "08:00",
+      "days": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+      "cron_expression": "0 8 * * 1-5"
+    },
+    "delivery": {
+      "channel": "slack",
+      "recipients": [
+        "Sarah Chen (VP Sales)",
+        "Mike Torres",
+        "Lisa Park",
+        "David Kim"
+      ],
+      "channel_config": {
+        "slack_channel": "#sales-pipeline"
+      },
+      "include_footer": true,
+      "footer_names": [
+        "CloudMetrics Sales Team"
+      ]
+    },
+    "detail_level": "summary",
+    "sections": {
+      "action_items": true,
+      "closing_this_week": true,
+      "top_deals": true,
+      "stale_deals": true,
+      "pipeline_snapshot": true,
+      "data_quality": false,
+      "team_breakdown": true,
+      "stage_distribution": true
+    },
+    "top_deals_count": 10
+  },
+  
+  "alerts": {
+    "stale_deals": {
+      "enabled": true,
+      "threshold_days": 10
+    },
+    "high_priority_deals": {
+      "enabled": true,
+      "deal_size_threshold": 50000
+    },
+    "overdue_close_dates": {
+      "enabled": true,
+      "alert_days_before": 1
+    },
+    "missing_data": {
+      "enabled": true,
+      "required_fields": ["amount", "owner", "close_date", "stage"]
+    },
+    "conversion_rate_drop": {
+      "enabled": true,
+      "threshold_percent": 15
+    }
+  },
+  
+  "integrations": {
+    "email_platform": {
+      "provider": "gmail",
+      "track_engagement": true
+    },
+    "calendar": {
+      "provider": "google-calendar",
+      "track_meetings": true
+    },
+    "accounting": {
+      "provider": "none",
+      "sync_invoices": false
+    },
+    "project_management": {
+      "provider": "asana",
+      "link_deals_to_projects": true
+    }
+  },
+  
+  "performance_targets": {
+    "pipeline_value": 5000000,
+    "deals_per_month": 60,
+    "win_rate_percent": 25,
+    "average_sales_cycle_days": 60,
+    "conversion_rate_by_stage": [
+      {"stage": "Lead", "target_percent": 50},
+      {"stage": "Qualified", "target_percent": 60},
+      {"stage": "Demo Scheduled", "target_percent": 75},
+      {"stage": "Demo Completed", "target_percent": 70},
+      {"stage": "Proposal Sent", "target_percent": 65},
+      {"stage": "Negotiation", "target_percent": 90}
+    ],
+    "sales_director_hours_per_week": 5
+  },
+  
+  "data_quality": {
+    "required_fields": [
+      "title",
+      "value",
+      "expected_close_date",
+      "person_id"
+    ],
+    "validation_rules": [
+      {
+        "field": "value",
+        "rule": "must be > 0 for deals past Qualified stage",
+        "severity": "error"
+      },
+      {
+        "field": "expected_close_date",
+        "rule": "must be within 90 days for deals past Demo Scheduled",
+        "severity": "warning"
+      },
+      {
+        "field": "seats",
+        "rule": "must be > 0 for deals past Demo Completed",
+        "severity": "warning"
+      }
+    ],
+    "deduplication": {
+      "enabled": true,
+      "match_fields": ["title", "organization_id"]
+    }
+  }
+}

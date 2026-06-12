@@ -1,0 +1,400 @@
+{
+  "company": {
+    "name": "Premium Eyewear Co",
+    "industry": "dtc-ecommerce",
+    "deployment_date": "2026-02-01",
+    "timezone": "America/New_York",
+    "sku_count": 893,
+    "warehouse_count": 15
+  },
+  
+  "inventory_system": {
+    "type": "netsuite",
+    "account_id": "$NETSUITE_ACCOUNT_ID",
+    "api_credentials": {
+      "consumer_key": "$NETSUITE_CONSUMER_KEY",
+      "consumer_secret": "$NETSUITE_CONSUMER_SECRET",
+      "token_id": "$NETSUITE_TOKEN_ID",
+      "token_secret": "$NETSUITE_TOKEN_SECRET"
+    },
+    "api_version": "v1",
+    "rate_limits": {
+      "requests_per_minute": 10,
+      "requests_per_hour": 1000,
+      "requests_per_day": 5000
+    },
+    "integration_method": "api"
+  },
+  
+  "warehouses": [
+    {
+      "id": "1",
+      "name": "Main Warehouse (US)",
+      "type": "primary",
+      "location_code": "MAIN",
+      "country": "USA",
+      "tracked": true,
+      "allocation_percent": 40,
+      "reorder_capable": true
+    },
+    {
+      "id": "5",
+      "name": "Amazon FBA US",
+      "type": "amazon-fba",
+      "location_code": "FBA-US",
+      "country": "USA",
+      "tracked": true,
+      "allocation_percent": 35,
+      "reorder_capable": false
+    },
+    {
+      "id": "14",
+      "name": "Amazon FBA DE",
+      "type": "amazon-fba",
+      "location_code": "FBA-DE",
+      "country": "Germany",
+      "tracked": true,
+      "allocation_percent": 10,
+      "reorder_capable": false
+    },
+    {
+      "id": "11",
+      "name": "Netherlands 3PL",
+      "type": "3pl",
+      "location_code": "3PL-NL",
+      "country": "Netherlands",
+      "tracked": true,
+      "allocation_percent": 15,
+      "reorder_capable": false
+    }
+  ],
+  
+  "skus": {
+    "tracking_mode": "product-lines",
+    "product_lines": [
+      {
+        "name": "Line C (Classic Collection)",
+        "prefix": "SKU-3",
+        "track_all_variants": false,
+        "specific_skus": ["SKU-3010", "SKU-3012", "SKU-3013", "SKU-3015", "SKU-3030", "SKU-3032", "SKU-3035", "SKU-3070", "SKU-3190", "SKU-3200"],
+        "priority": "high"
+      },
+      {
+        "name": "Line A (Sport)",
+        "prefix": "SKU-1",
+        "track_all_variants": true,
+        "priority": "critical"
+      },
+      {
+        "name": "Line B (Partner Sport)",
+        "prefix": "SKU-2",
+        "track_all_variants": true,
+        "priority": "high"
+      },
+      {
+        "name": "Line D (Liquidation)",
+        "prefix": "SKU-4",
+        "track_all_variants": true,
+        "priority": "medium"
+      }
+    ],
+    "exclusions": {
+      "patterns": ["%E", "%-BT%", "%-K", "%-FFC", "%-PB", "%-ZIP", "%YI"],
+      "inactive": true,
+      "discontinued": true
+    }
+  },
+  
+  "thresholds": {
+    "low_stock": {
+      "mode": "days-of-supply",
+      "days_of_supply": 14,
+      "velocity_lookback_days": 30
+    },
+    "out_of_stock": {
+      "trigger_at_zero": true,
+      "include_in_transit": true
+    },
+    "overstock": {
+      "enabled": false
+    },
+    "reorder_point": {
+      "mode": "hybrid",
+      "safety_factor": 2.0,
+      "lead_time_days": 21
+    }
+  },
+  
+  "sales_channels": [
+    {
+      "name": "DTC Website",
+      "type": "dtc-website",
+      "platform": "shopify",
+      "allocation_percent": 40,
+      "warehouse_id": "1",
+      "track_separately": true
+    },
+    {
+      "name": "Amazon US",
+      "type": "amazon-fba",
+      "platform": "amazon-seller-central",
+      "allocation_percent": 35,
+      "warehouse_id": "5",
+      "track_separately": true
+    },
+    {
+      "name": "Amazon EU (DE)",
+      "type": "amazon-fba",
+      "platform": "amazon-seller-central",
+      "allocation_percent": 10,
+      "warehouse_id": "14",
+      "track_separately": true
+    },
+    {
+      "name": "B2B Wholesale",
+      "type": "wholesale",
+      "platform": "shopify",
+      "allocation_percent": 15,
+      "warehouse_id": "1",
+      "track_separately": true
+    }
+  ],
+  
+  "late_orders": {
+    "enabled": true,
+    "source": "shopify",
+    "age_buckets": [
+      {
+        "name": "MONITOR",
+        "min_days": 7,
+        "max_days": 13,
+        "severity": "monitor",
+        "emoji": "🟡"
+      },
+      {
+        "name": "ATTENTION",
+        "min_days": 14,
+        "max_days": 20,
+        "severity": "attention",
+        "emoji": "🟠"
+      },
+      {
+        "name": "WARNING",
+        "min_days": 21,
+        "max_days": 29,
+        "severity": "warning",
+        "emoji": "🔶"
+      },
+      {
+        "name": "CRITICAL",
+        "min_days": 30,
+        "max_days": 60,
+        "severity": "critical",
+        "emoji": "🔴"
+      },
+      {
+        "name": "ARCHIVE",
+        "min_days": 61,
+        "max_days": 999,
+        "severity": "archive",
+        "emoji": "📁"
+      }
+    ],
+    "exclusions": {
+      "custom_orders": true,
+      "prescription_orders": true,
+      "made_to_order": false,
+      "tags": ["rx-order", "lab", "custom lenses"]
+    }
+  },
+  
+  "channel_balance": {
+    "enabled": true,
+    "allocation_targets": {
+      "dtc-website": 40,
+      "amazon-us": 35,
+      "amazon-de": 10,
+      "wholesale": 15
+    },
+    "imbalance_threshold_percent": 20,
+    "auto_rebalance": false
+  },
+  
+  "fulfillment_tracking": {
+    "enabled": true,
+    "target_ship_hours": 24,
+    "carrier_apis": [
+      {
+        "carrier": "ups",
+        "track_in_transit": true
+      },
+      {
+        "carrier": "usps",
+        "track_in_transit": true
+      },
+      {
+        "carrier": "fedex",
+        "track_in_transit": false
+      }
+    ],
+    "lag_detection": {
+      "warning_hours": 48,
+      "critical_hours": 72
+    }
+  },
+  
+  "reorder_process": {
+    "mode": "manual",
+    "auto_generate_pos": false,
+    "approval_required": true,
+    "suppliers": [
+      {
+        "id": "supplier-a",
+        "name": "Supplier A (China)",
+        "contact_email": "orders@supplier-a.example.com",
+        "lead_time_days": 21,
+        "minimum_order_quantity": 50,
+        "skus": ["SKU-1%", "SKU-2%"],
+        "auto_approve": false
+      },
+      {
+        "id": "supplier-b",
+        "name": "Supplier B (Taiwan)",
+        "contact_email": "orders@supplier-b.example.com",
+        "lead_time_days": 30,
+        "minimum_order_quantity": 100,
+        "skus": ["SKU-5%"],
+        "auto_approve": false
+      },
+      {
+        "id": "supplier-c",
+        "name": "Supplier C (Optical Lab, USA)",
+        "contact_email": "orders@supplier-c.example.com",
+        "lead_time_days": 14,
+        "minimum_order_quantity": 25,
+        "skus": ["RX%", "LENS%"],
+        "auto_approve": false
+      }
+    ],
+    "po_integration": {
+      "enabled": false,
+      "system": "manual"
+    }
+  },
+  
+  "alerts": {
+    "recipients": [
+      {
+        "name": "COO",
+        "role": "coo",
+        "delivery_channel": "telegram",
+        "telegram_chat_id": "$TELEGRAM_CHAT_ID",
+        "severity_filter": ["critical", "warning"]
+      },
+      {
+        "name": "Ops Team",
+        "role": "ops-manager",
+        "delivery_channel": "telegram",
+        "telegram_chat_id": "$TELEGRAM_CHAT_ID",
+        "severity_filter": ["critical", "warning", "attention", "monitor"]
+      },
+      {
+        "name": "Warehouse Team",
+        "role": "warehouse-manager",
+        "delivery_channel": "email",
+        "email": "warehouse@premiumeyewear.co",
+        "severity_filter": ["critical", "warning"]
+      }
+    ],
+    "severity_levels": {
+      "critical": {
+        "emoji": "🔴",
+        "notify_immediately": true
+      },
+      "warning": {
+        "emoji": "🟠",
+        "batch_delivery": false
+      },
+      "monitor": {
+        "emoji": "🟡",
+        "daily_digest_only": true
+      }
+    },
+    "quiet_hours": {
+      "enabled": false
+    }
+  },
+  
+  "reporting": {
+    "frequency": "every-4-hours",
+    "schedule": {
+      "cron_expression": "0 10,18 * * *",
+      "timezone": "America/New_York"
+    },
+    "delivery": {
+      "channel": "telegram",
+      "recipients": ["$TELEGRAM_CHAT_ID"],
+      "include_charts": false
+    },
+    "sections": {
+      "stock_alerts": true,
+      "late_orders": true,
+      "reorder_recommendations": true,
+      "channel_balance": true,
+      "fulfillment_lag": false,
+      "open_purchase_orders": true,
+      "aged_purchase_orders": true
+    },
+    "detail_level": "summary"
+  },
+  
+  "integrations": {
+    "slack": {
+      "enabled": false
+    },
+    "telegram": {
+      "enabled": true,
+      "bot_token": "$TELEGRAM_BOT_TOKEN",
+      "chat_id": "$TELEGRAM_CHAT_ID"
+    },
+    "discord": {
+      "enabled": true,
+      "webhook_url": "$DISCORD_WEBHOOK_URL"
+    },
+    "supabase": {
+      "enabled": true,
+      "url": "$SUPABASE_URL",
+      "anon_key": "$SUPABASE_ANON_KEY",
+      "table_name": "bot_daily_digest"
+    },
+    "accounting_system": {
+      "type": "netsuite",
+      "sync_pos": false
+    }
+  },
+  
+  "performance_targets": {
+    "stockout_prevention_rate_percent": 95,
+    "late_order_target_days": 12,
+    "fulfillment_target_hours": 24,
+    "overstock_reduction_percent": 30,
+    "ops_manager_hours_per_week": 2
+  },
+  
+  "data_quality": {
+    "required_fields": ["itemid", "quantityavailable", "location"],
+    "validation_rules": [
+      {
+        "field": "quantityavailable",
+        "rule": "must be >= 0",
+        "severity": "error"
+      },
+      {
+        "field": "reorderpoint",
+        "rule": "should be > 0 for active SKUs",
+        "severity": "warning"
+      }
+    ],
+    "auto_correct": false
+  }
+}

@@ -1,0 +1,306 @@
+{
+  "company": {
+    "name": "Urban Threads Apparel",
+    "industry": "dtc-ecommerce",
+    "deployment_date": "2026-04-01",
+    "timezone": "America/Los_Angeles",
+    "sku_count": 187,
+    "warehouse_count": 1
+  },
+  
+  "inventory_system": {
+    "type": "shopify",
+    "account_id": "$SHOPIFY_STORE",
+    "api_credentials": {
+      "access_token": "$SHOPIFY_ACCESS_TOKEN"
+    },
+    "api_version": "2024-01",
+    "rate_limits": {
+      "requests_per_minute": 40,
+      "requests_per_day": 10000
+    },
+    "integration_method": "api"
+  },
+  
+  "warehouses": [
+    {
+      "id": "1",
+      "name": "Los Angeles 3PL",
+      "type": "3pl",
+      "location_code": "LA-3PL",
+      "country": "USA",
+      "tracked": true,
+      "allocation_percent": 100,
+      "reorder_capable": true
+    }
+  ],
+  
+  "skus": {
+    "tracking_mode": "product-lines",
+    "product_lines": [
+      {
+        "name": "T-Shirts",
+        "prefix": "TEE",
+        "track_all_variants": true,
+        "priority": "high"
+      },
+      {
+        "name": "Hoodies",
+        "prefix": "HOOD",
+        "track_all_variants": true,
+        "priority": "critical"
+      },
+      {
+        "name": "Joggers",
+        "prefix": "JOG",
+        "track_all_variants": true,
+        "priority": "high"
+      },
+      {
+        "name": "Accessories",
+        "prefix": "ACC",
+        "track_all_variants": false,
+        "priority": "medium"
+      }
+    ],
+    "exclusions": {
+      "patterns": ["%SAMPLE%", "%TEST%"],
+      "inactive": true,
+      "discontinued": true
+    }
+  },
+  
+  "thresholds": {
+    "low_stock": {
+      "mode": "both",
+      "days_of_supply": 14,
+      "unit_count": 10,
+      "velocity_lookback_days": 30
+    },
+    "out_of_stock": {
+      "trigger_at_zero": true,
+      "include_in_transit": true
+    },
+    "overstock": {
+      "enabled": true,
+      "months_of_supply": 6
+    },
+    "reorder_point": {
+      "mode": "automatic",
+      "safety_factor": 1.5,
+      "lead_time_days": 45
+    }
+  },
+  
+  "sales_channels": [
+    {
+      "name": "DTC Website",
+      "type": "dtc-website",
+      "platform": "shopify",
+      "allocation_percent": 100,
+      "warehouse_id": "1",
+      "track_separately": false
+    }
+  ],
+  
+  "late_orders": {
+    "enabled": true,
+    "source": "shopify",
+    "age_buckets": [
+      {
+        "name": "ATTENTION",
+        "min_days": 3,
+        "max_days": 7,
+        "severity": "attention",
+        "emoji": "🟠"
+      },
+      {
+        "name": "WARNING",
+        "min_days": 8,
+        "max_days": 14,
+        "severity": "warning",
+        "emoji": "🔶"
+      },
+      {
+        "name": "CRITICAL",
+        "min_days": 15,
+        "max_days": 30,
+        "severity": "critical",
+        "emoji": "🔴"
+      }
+    ],
+    "exclusions": {
+      "custom_orders": true,
+      "prescription_orders": false,
+      "made_to_order": false,
+      "tags": ["preorder", "custom-print"]
+    }
+  },
+  
+  "channel_balance": {
+    "enabled": false
+  },
+  
+  "fulfillment_tracking": {
+    "enabled": true,
+    "target_ship_hours": 24,
+    "carrier_apis": [
+      {
+        "carrier": "usps",
+        "track_in_transit": true
+      },
+      {
+        "carrier": "ups",
+        "track_in_transit": false
+      }
+    ],
+    "lag_detection": {
+      "warning_hours": 36,
+      "critical_hours": 72
+    }
+  },
+  
+  "reorder_process": {
+    "mode": "hybrid",
+    "auto_generate_pos": true,
+    "approval_required": true,
+    "suppliers": [
+      {
+        "id": "vietnam-factory",
+        "name": "Saigon Garment Co.",
+        "contact_email": "orders@saigongarment.vn",
+        "lead_time_days": 45,
+        "minimum_order_quantity": 200,
+        "skus": ["TEE%", "HOOD%", "JOG%"],
+        "auto_approve": false
+      },
+      {
+        "id": "accessory-supplier",
+        "name": "Pacific Trade Partners",
+        "contact_email": "orders@pacifictrade.com",
+        "lead_time_days": 21,
+        "minimum_order_quantity": 50,
+        "skus": ["ACC%"],
+        "auto_approve": true
+      }
+    ],
+    "po_integration": {
+      "enabled": false,
+      "system": "email"
+    }
+  },
+  
+  "alerts": {
+    "recipients": [
+      {
+        "name": "Sarah (Founder)",
+        "role": "ceo",
+        "delivery_channel": "slack",
+        "slack_channel": "#inventory-alerts",
+        "severity_filter": ["critical"]
+      },
+      {
+        "name": "Mike (Operations)",
+        "role": "ops-manager",
+        "delivery_channel": "slack",
+        "slack_channel": "#inventory-alerts",
+        "severity_filter": ["critical", "warning", "attention"]
+      },
+      {
+        "name": "3PL Team",
+        "role": "warehouse-manager",
+        "delivery_channel": "email",
+        "email": "fulfillment@la3pl.com",
+        "severity_filter": ["critical", "warning"]
+      }
+    ],
+    "severity_levels": {
+      "critical": {
+        "emoji": "🔴",
+        "notify_immediately": true
+      },
+      "warning": {
+        "emoji": "🟠",
+        "batch_delivery": true
+      },
+      "monitor": {
+        "emoji": "🟡",
+        "daily_digest_only": true
+      }
+    },
+    "quiet_hours": {
+      "enabled": true,
+      "start_time": "22:00",
+      "end_time": "08:00",
+      "exceptions": ["critical", "out-of-stock"]
+    }
+  },
+  
+  "reporting": {
+    "frequency": "daily",
+    "schedule": {
+      "cron_expression": "0 9 * * *",
+      "timezone": "America/Los_Angeles"
+    },
+    "delivery": {
+      "channel": "slack",
+      "recipients": ["#inventory-alerts"],
+      "include_charts": false
+    },
+    "sections": {
+      "stock_alerts": true,
+      "late_orders": true,
+      "reorder_recommendations": true,
+      "channel_balance": false,
+      "fulfillment_lag": true,
+      "open_purchase_orders": true,
+      "aged_purchase_orders": false
+    },
+    "detail_level": "summary"
+  },
+  
+  "integrations": {
+    "slack": {
+      "enabled": true,
+      "webhook_url": "$SLACK_WEBHOOK_URL"
+    },
+    "telegram": {
+      "enabled": false
+    },
+    "discord": {
+      "enabled": false
+    },
+    "supabase": {
+      "enabled": false
+    },
+    "accounting_system": {
+      "type": "none",
+      "sync_pos": false
+    }
+  },
+  
+  "performance_targets": {
+    "stockout_prevention_rate_percent": 90,
+    "late_order_target_days": 5,
+    "fulfillment_target_hours": 24,
+    "overstock_reduction_percent": 40,
+    "ops_manager_hours_per_week": 3
+  },
+  
+  "data_quality": {
+    "required_fields": ["sku", "inventory_quantity", "title"],
+    "validation_rules": [
+      {
+        "field": "inventory_quantity",
+        "rule": "must be >= 0",
+        "severity": "error"
+      },
+      {
+        "field": "sku",
+        "rule": "must be unique",
+        "severity": "error"
+      }
+    ],
+    "auto_correct": false
+  }
+}
