@@ -4,6 +4,13 @@ All notable changes to the JBOT Protocol will be documented in this file.
 
 ---
 
+## [v2.2.1] — 2026-07-03
+
+### Added
+- **Case study: Twice-Weekly Inventory Rebalancing Loop** (`case-studies/inventory-rebalancing-loop.md`) — anonymized global multi-warehouse planning loop: propose-only cron + human-gated ERP execution, audit-before-build method, live-verification lessons (adversarial verification can't catch shared false premises; sentinel values poison classifiers; trigger on inventory position not on-hand; model economy as governance).
+
+---
+
 ## [v2.2] — 2026-06-12
 
 ### Added
